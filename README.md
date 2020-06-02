@@ -37,8 +37,9 @@ The C++ and Java files can be tested with the shell scipt, testCases.sh. To run 
 ```bash testCases.sh```
 
 
-For each case you will see the result followed by the expected outcome. For example: <br>
-```5```<br>
+For each case you will see the result followed by the expected outcome. <br>
+For example: <br>
+```5<br>Expected: 5```
 ```Expected: 5```
 
 
