@@ -43,6 +43,16 @@ MUL       # Pops the two top values from the stack, *multiplies* them, and pushe
 SWAP      # Swaps the top two numbers from the stack
 END       # Ends the input stream and returns output
 ```
+For example, inputting the following set of commands
+```
+PUSH 1
+PUSH 2
+PUSH 3
+MUL
+ADD
+END
+```
+Will yield an output of 7.
 
 ---
 ### Test cases:
