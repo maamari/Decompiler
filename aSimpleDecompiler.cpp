@@ -115,21 +115,20 @@ int main() {
     cout << "  SWAP: Swap values from the stack" << endl;
     cout << "  END: Enter END when finished with commands\n" << endl;
 
-    string line, op;  // Operation
-    vector<std::string> ops;
-    int pushVal;
-    while (getline(cin, line)) {
-        // Check that only one input is provided (unless PUSHing)
+    string line, op;  // Input line, operation
+    vector<std::string> ops;  // Input line split up
+    while (getline(cin, line)) {    // While we can grab a line
+        // Check that input is valid
         ops.clear();
         stringstream ss(line);
-        while(ss >> op)
-            ops.push_back(op);
+        while(ss >> op) // Split up line
+            ops.push_back(op); // And push into ops vector
         for (auto &c: ops[0]) c = toupper(c); // Capitalize input
-        if (ops.size()>1) {
-            if (ops.size()>2 || ops[0]!="PUSH") {
-                cout << "Please use one command per line (ex: PUSH 2)\n" << endl;
+        if (ops.size()>1) { // If more than one operation
+            if (ops.size()>2 || ops[0]!="PUSH") { // And not PUSH or more than 2 operations
+                cout << "Please use one command per line (ex: PUSH 2)\n" << endl;  // Throw error and redo
                 continue;
-            } else if (!string_to_int(ops[1])) {
+            } else if (!string_to_int(ops[1])) {  // If push value is invalid, throw error and redo
                 cout << "Requested PUSH with non-integer value. Please call PUSH followed by an integer (ex: PUSH 2).\n" << endl;
                 continue;
             }
