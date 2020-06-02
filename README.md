@@ -2,29 +2,57 @@
 ## Karime Maamari
 <br>
 
-This repository contains a simple stack-based decompiler. The implementation is provided in various languages, though the jupyter-notebook (aSimpleDecompiler.ipynb) is recommended.
+This repository contains a simple stack-based decompiler. The implementation is provided in three languages: Python (jupyter-notebook), Java, and C++. All three files operate in a similar manner and pass the same test cases. 
 
 ---
 ### Running the code:
 
 #### Jupyter-notebook
-To run the notebook, first make sure that you have jupyter-notebook installed on your system<br>
+Before running the notebook, first make sure that you have jupyter installed on your system<br>
 ```pip install jupyter```
 
 
-And then run the notebook<br>
+And then open the notebook<br>
 ```jupyter-notebook aSimpleDecompiler.ipynb```
    
+Run the "Decompiler class" and "Input handler" cells by simultaneously pressing SHIFT and ENTER. After you run the "Input handler" cell, you will be prompted for an input. Please follow the format explained below in the *Input format* section.
+
 #### C++
 To run the C++ file, execute the following (replacing g++ with your given compiler):<br>
-```g++ aSimpleDecompiler.cpp -o decompiler```<br>
-```./decompiler```
+```
+g++ aSimpleDecompiler.cpp -o decompiler
+./decompiler
+```
+And enter your inputs line-by-line as explained below in the *Input format* section.
 
 #### Java
 To run the Java file, execute the following:<br>
-```javac aSimpleDecompiler.java```<br>
-```java DecompilerDriver.class```
+```
+javac aSimpleDecompiler.java
+java DecompilerDriver.class
+```
+And enter your inputs line-by-line as demonstrated below.
 
+#### Input format
+Irrespective of which file you run, the input takes the following commands (entered line-by-line):
+```
+PUSH <N>  # Pushes the given integer, N, onto the stack
+ADD       # Pops the two top values from the stack, adds them, and pushes the result
+SUB       # Pops the two top values from the stack, *subtracts* them, and pushes the result
+MUL       # Pops the two top values from the stack, *multiplies* them, and pushes the result
+SWAP      # Swaps the top two numbers from the stack
+END       # Ends the input stream and returns output
+```
+For example, inputting the following set of commands
+```
+PUSH 1
+PUSH 2
+PUSH 3
+MUL
+ADD
+END
+```
+Will yield an output of 7
 
 ---
 ### Test cases:
@@ -39,8 +67,10 @@ The C++ and Java files can be tested with the shell scipt, testCases.sh. To run 
 
 For each case you will see the result followed by the expected outcome. <br>
 For example: <br>
-```5```<br>
-```Expected: 5```
+```
+5
+Expected: 5
+```
 
 <br>
 
