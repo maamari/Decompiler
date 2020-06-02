@@ -15,16 +15,27 @@ To run the notebook, first make sure that you have jupyter-notebook installed on
 And then run the notebook<br>
 ```jupyter-notebook aSimpleDecompiler.ipynb```
    
+Go down to the cell titled "The input handler" and enter your inputs line-by-line as demonstrated below.
+
 #### C++
 To run the C++ file, execute the following (replacing g++ with your given compiler):<br>
 ```g++ aSimpleDecompiler.cpp -o decompiler```<br>
 ```./decompiler```
+And enter your inputs line-by-line as demonstrated below.
 
 #### Java
 To run the Java file, execute the following:<br>
 ```javac aSimpleDecompiler.java```<br>
 ```java DecompilerDriver.class```
+And enter your inputs line-by-line as demonstrated below.
 
+#### Input format
+Irrespective of which file you run, the input format is as follows:
+```PUSH 1```<br>
+```PUSH 2```<br>
+```ADD```<br>
+```END```<br>
+Note that the "END" keyword is cruicial in ending a given input stream and providing an output.
 
 ---
 ### Test cases:
