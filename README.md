@@ -52,7 +52,7 @@ MUL
 ADD
 END
 ```
-Will yield an output of 7.
+Will yield an output of 7
 
 ---
 ### Test cases:
