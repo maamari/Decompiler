@@ -43,7 +43,6 @@ MUL       # Pops the two top values from the stack, *multiplies* them, and pushe
 SWAP      # Swaps the top two numbers from the stack
 END       # Ends the input stream and returns output
 ```
-Note that the "END" keyword is cruicial in ending a given input stream and providing an output.
 
 ---
 ### Test cases:
