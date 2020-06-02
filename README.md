@@ -2,7 +2,7 @@
 ## Karime Maamari
 <br>
 
-This repository contains a simple stack-based decompiler. The implementation is provided in three languages: Python (jupyter-notebook), Java, and C++. While the jupyter-notebook implementation is recommended for clarity, all three files operate in the same manner and pass the same test cases. 
+This repository contains a simple stack-based decompiler. The implementation is provided in three languages: Python (jupyter-notebook), Java, and C++. While the jupyter-notebook is recommended for clarity, all three files operate in the same manner and pass the same test cases. 
 
 ---
 ### Running the code:
