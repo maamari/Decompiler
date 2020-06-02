@@ -19,22 +19,30 @@ Go down to the cell titled "The input handler" and enter your inputs line-by-lin
 
 #### C++
 To run the C++ file, execute the following (replacing g++ with your given compiler):<br>
-```g++ aSimpleDecompiler.cpp -o decompiler```<br>
-```./decompiler```
+```
+g++ aSimpleDecompiler.cpp -o decompiler
+./decompiler
+```
 And enter your inputs line-by-line as demonstrated below.
 
 #### Java
 To run the Java file, execute the following:<br>
-```javac aSimpleDecompiler.java```<br>
-```java DecompilerDriver.class```
+```
+javac aSimpleDecompiler.java
+java DecompilerDriver.class
+```
 And enter your inputs line-by-line as demonstrated below.
 
 #### Input format
-Irrespective of which file you run, the input format is as follows:
-```PUSH 1```<br>
-```PUSH 2```<br>
-```ADD```<br>
-```END```<br>
+Irrespective of which file you run, the input takes the following commands (entered line-by-line):
+```
+PUSH <N>  # Pushes the given integer, N, onto the stack
+ADD  # Pops the two top values from the stack, adds them, and pushes the result
+SUB  # Pops the two top values from the stack, *subtracts* them, and pushes the result
+MUL  # Pops the two top values from the stack, *multiplies* them, and pushes the result
+SWAP  # Swaps the top two numbers from the stack
+END  # Ends the input stream and returns output
+```
 Note that the "END" keyword is cruicial in ending a given input stream and providing an output.
 
 ---
@@ -50,8 +58,10 @@ The C++ and Java files can be tested with the shell scipt, testCases.sh. To run 
 
 For each case you will see the result followed by the expected outcome. <br>
 For example: <br>
-```5```<br>
-```Expected: 5```
+```
+5
+Expected: 5
+```
 
 <br>
 
