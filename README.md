@@ -42,8 +42,5 @@ For example: <br>
 ```5```<br>
 ```Expected: 5```
 
-
-The details of each test case are commented throughout the script.
-
 <br>
 
