@@ -17,12 +17,12 @@ And then run the notebook<br>
    
 #### C++
 To run the C++ file, execute the following (replacing g++ with your given compiler):<br>
-```g++ aSimpleDecompiler.cpp -o decompiler```
+```g++ aSimpleDecompiler.cpp -o decompiler```<br>
 ```./decompiler```
 
 #### Java
 To run the Java file, execute the following:<br>
-```javac aSimpleDecompiler.java```
+```javac aSimpleDecompiler.java```<br>
 ```java DecompilerDriver.class```
 
 
@@ -38,7 +38,7 @@ The C++ and Java files can be tested with the shell scipt, testCases.sh. To run 
 
 
 For each case you will see the result followed by the expected outcome. For example: <br>
-```5```
+```5```<br>
 ```Expected: 5```
 
 
