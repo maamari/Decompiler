@@ -8,7 +8,7 @@ public:
     stack <string> arr;
 
     int count=0;
-    void push(string integer);
+    void push(string value);
     string Pop();
     void operationHelper(string operation);
     void add();
@@ -63,13 +63,13 @@ void Stack::operationHelper(string operation) {
     else if (size == 1) {
         string firstTerm = arr.top();
         arr.pop();
-        arr.push("(integer" + to_string(count) + operation + firstTerm + ")");
+        arr.push("(x" + to_string(count) + operation + firstTerm + ")");
         count++;
     }
 
     // No terms on stack
     else {
-        arr.push("(integer" + to_string(count) + operation + "integer" + to_string(count+1) + ")");
+        arr.push("(x" + to_string(count) + operation + "x" + to_string(count+1) + ")");
         count+=2;
     }
 }
@@ -104,8 +104,8 @@ void Stack::swap() {
 }
 
 int main() {
-    Stack str;
-    str = Stack();
+    Stack s;
+    s = Stack();
 
     cout << "Enter operation name: " << endl;
     cout << "  PUSH <N>: Push an integer, N, to the stack" << endl;
@@ -115,38 +115,44 @@ int main() {
     cout << "  SWAP: Swap values from the stack" << endl;
     cout << "  END: Enter END when finished with commands\n" << endl;
 
-    string op;  // Operation
-    while (cin >> op) {
-        int pushVal;
-        // Capitalize input
-        for (auto &c: op) c = toupper(c);
-
-        if (op == "ADD") {
-            str.add();
-        } else if (op == "SUB") {
-            str.sub();
-        } else if (op == "MUL") {
-            str.mul();
-        } else if (op == "SWAP") {
-            str.swap();
-        } else if (op == "END") {
-            break;
-        } else if (op == "PUSH") {
-            cin >> pushVal;
-            // If PUSH with non-int value
-            if (cin.fail()) {
-                cin.clear();
-                cout << "Requested PUSH with non-integer value. Please call PUSH followed by an integer (ex: PUSH 2).\n"
-                     << endl;
-            } else {
-                str.arr.push(to_string(pushVal));
+    string line, op;  // Operation
+    vector<std::string> ops;
+    int pushVal;
+    while (getline(cin, line)) {
+        // Check that only one input is provided (unless PUSHing)
+        ops.clear();
+        stringstream ss(line);
+        while(ss >> op)
+            ops.push_back(op);
+        for (auto &c: ops[0]) c = toupper(c); // Capitalize input
+        if (ops.size()>1) {
+            if (ops.size()>2 || ops[0]!="PUSH") {
+                cout << "Please use one command per line (ex: PUSH 2)\n" << endl;
+                continue;
+            } else if (!string_to_int(ops[1])) {
+                cout << "Requested PUSH with non-integer value. Please call PUSH followed by an integer (ex: PUSH 2).\n" << endl;
+                continue;
             }
+        }
+        if (ops[0] == "ADD") {
+            s.add();
+        } else if (ops[0] == "SUB") {
+            s.sub();
+        } else if (ops[0] == "MUL") {
+            s.mul();
+        } else if (ops[0] == "SWAP") {
+            s.swap();
+        } else if (ops[0] == "END") {
+            break;
+        } else if (ops[0] == "PUSH") {
+            s.arr.push(ops[1]);
+        }
         // If non-keyword arg is provided
-        } else {
+        else {
             cout << "Keyword not recognized. Please request either: PUSH <N>, ADD, SUB, MUL, SWAP, or END.\n" << endl;
         }
     }
     // If something lives on the stack, output it
-    if (str.arr.size()>0)
-        str.expression();
+    if (s.arr.size()>0)
+        s.expression();
 }
