@@ -1,6 +1,22 @@
 #include <bits/stdc++.h>
-
 using namespace std;
+
+//class stack created
+class Stack {
+public:
+    Stack() {} //initializing empty stack;
+    stack <string> arr;
+
+    int count=0;
+    void push(string x);
+    string Pop();
+    void operationHelper(string operation);
+    void add();
+    void sub();
+    void mul();
+    void swap();
+    void expression();
+};
 
 //convert string to int
 int string_to_int(string s) {
@@ -8,41 +24,6 @@ int string_to_int(string s) {
     int x = 0;
     geek >> x;
     return x;
-}
-
-//class stack created
-class Stack {
-public:
-    int top, count=0;
-
-    stack <string> arr;
-    Stack() { top = -1; } //initializing empty stack;
-
-    void push(string x);
-    string Pop();
-    void operationHelper(string operation);
-    void add();
-    void sub();
-    void mul();
-    void expression();
-};
-
-void Stack::push(string x) {
-    arr.push(x); //add the element into the array
-    top++; //increase top by one;
-}
-
-string Stack::Pop() {
-    if (top < 0) {
-        cout << "Stack Underflow"; //if stack is empty
-        return 0;
-    }
-    else {
-        string x = arr.top();  //top element in the string
-        arr.pop(); //remove the top element
-        top--; //decrease the top value;
-        return x;
-    }
 }
 
 //print the stack
@@ -103,44 +84,57 @@ void Stack::mul() {
 }
 
 //swap top two element
-void swap(Stack &s) {
-    string a = s.Pop();
-    string b = s.Pop();
-    s.push(a);
-    s.push(b);
+void Stack::swap() {
+    if(arr.size()>=2) {
+        string a = arr.top();
+        arr.pop();
+        string b = arr.top();
+        arr.pop();
+        arr.push(a);
+        arr.push(b);
+    } else {
+        cout << "Stack not large enough for swap.\n" << endl;
+    }
 }
 
 int main() {
     Stack s;
-    int n;
-    string val;
     s = Stack();
 
     cout << "Enter operation name: " << endl;
-    cout << "  PUSH: Push an integer, N, to the stack" << endl;
+    cout << "  PUSH <N>: Push an integer, N, to the stack" << endl;
     cout << "  ADD: Add values from the stack" << endl;
     cout << "  SUB: Subtract values from the stack" << endl;
     cout << "  MUL: Multiply values from the stack" << endl;
     cout << "  SWAP: Swap values from the stack" << endl;
     cout << "  END: Enter END when finished with commands\n" << endl;
 
-    while (1) {
-        string op;
-        cin >> op;
-        if (op == "PUSH") {
-            cout << "Enter integer to be pushed: ";
-            cin >> val;
-            s.push(val);
-        } else if (op == "ADD") {
+    string op;
+    while (cin >> op) {
+        int val;
+        for (auto &c: op) c = toupper(c);
+
+        if (op == "ADD") {
             s.add();
         } else if (op == "SUB") {
             s.sub();
         } else if (op == "MUL") {
             s.mul();
         } else if (op == "SWAP") {
-            swap(s);
+            s.swap();
         } else if (op == "END") {
             break;
+        } else if (op == "PUSH") {
+            cin >> val;
+            if (cin.fail()) {
+                cin.clear();
+                cout << "Requested PUSH with non-integer value. Please call PUSH followed by an integer (ex: PUSH 2).\n"
+                     << endl;
+            } else {
+                s.arr.push(to_string(val));
+            }
+        } else {
+            cout << "Keyword not recognized. Please request either: PUSH <N>, ADD, SUB, MUL, SWAP, or END.\n" << endl;
         }
     }
     s.expression();
