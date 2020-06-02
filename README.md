@@ -4,6 +4,7 @@
 
 This repository contains a simple stack-based decompiler. The implementation is provided in various languages, though the jupyter-notebook (aSimpleDecompiler.ipynb) is recommended.
 
+---
 ### Running the code:
 
 #### Jupyter-notebook
@@ -16,15 +17,16 @@ And then run the notebook<br>
    
 #### C++
 To run the C++ file, execute the following (replacing g++ with your given compiler):<br>
-```g++ aSimpleDecompiler.cpp -o decompiler```
+```g++ aSimpleDecompiler.cpp -o decompiler```<br>
 ```./decompiler```
 
 #### Java
 To run the Java file, execute the following:<br>
-```javac aSimpleDecompiler.java```
+```javac aSimpleDecompiler.java```<br>
 ```java DecompilerDriver.class```
 
 
+---
 ### Test cases:
 
 #### Jupyter-notebook
@@ -35,8 +37,9 @@ The C++ and Java files can be tested with the shell scipt, testCases.sh. To run 
 ```bash testCases.sh```
 
 
-For each case you will see the result followed by the expected outcome. For example: <br>
-```5```
+For each case you will see the result followed by the expected outcome. <br>
+For example: <br>
+```5```<br>
 ```Expected: 5```
 
 
