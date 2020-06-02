@@ -8,7 +8,7 @@ This repository contains a simple stack-based decompiler. The implementation is 
 ### Running the code:
 
 #### Jupyter-notebook
-To run the notebook, first make sure that you have jupyter-notebook installed on your system<br>
+To run the notebook, first make sure that you have jupyter installed on your system<br>
 ```pip install jupyter```
 
 
