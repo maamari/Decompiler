@@ -1,4 +1,4 @@
-# HRL Laboratories Decompiler
+# A Simple Decompiler
 ## Karime Maamari
 <br>
 
