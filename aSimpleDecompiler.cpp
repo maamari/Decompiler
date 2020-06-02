@@ -31,15 +31,15 @@ void Stack::expression() {
 void Stack::operationHelper(string operation) {
     int stackSize = stck.size();
 
-	// Normal operation between two elements
+    // Normal operation between two elements
     if (stackSize >= 2) {
         string firstTerm = stck.top(); // Take top element from the stack
         stck.pop(); // Remove top element
         string secondTerm = stck.top(); // Repeat
         stck.pop();
-		
-		// If both elements are ints
-        if (string_to_int(firstTerm) && string_to_int(secondTerm)){  
+
+        // If both elements are ints
+        if (string_to_int(firstTerm) && string_to_int(secondTerm)){
             int firstTermINT = string_to_int(firstTerm);
             int secondTermINT = string_to_int(secondTerm);
             if (operation == "+"){
@@ -53,13 +53,13 @@ void Stack::operationHelper(string operation) {
                 stck.push(output);
             }
         }
-		// If one element is not an int
-        else { 
+            // If one element is not an int
+        else {
             stck.push("("+firstTerm+operation+secondTerm+")");
         }
     }
 
-    // Only one element on stack
+        // Only one element on stack
     else if (stackSize == 1) {
         string firstTerm = stck.top();
         stck.pop();
@@ -67,7 +67,7 @@ void Stack::operationHelper(string operation) {
         varCounter++;
     }
 
-    // No terms on stack
+        // No terms on stack
     else {
         stck.push("(x" + to_string(varCounter) + operation + "x" + to_string(varCounter+1) + ")");
         varCounter+=2;
@@ -141,7 +141,7 @@ int main() {
                 cout << "Please use one command per line (ex: PUSH 2)\n" << endl;
                 continue;
             }
-            // If PUSH value is invalid, print error message
+                // If PUSH value is invalid, print error message
             else if (!string_to_int(inputs[1])) {
                 cout << "Requested PUSH with non-integer value. Please call PUSH followed by an integer (ex: PUSH 2).\n" << endl;
                 continue;
@@ -162,7 +162,7 @@ int main() {
         } else if (inputs[0] == "PUSH") {
             s.stck.push(inputs[1]);
         }
-        // If unrecognized operation is provided, print error message
+            // If unrecognized operation is provided, print error message
         else {
             cout << "Keyword not recognized. Please request either: PUSH <N>, ADD, SUB, MUL, SWAP, or END.\n" << endl;
         }

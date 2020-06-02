@@ -5,7 +5,7 @@ import java.lang.*;
 class Decompiler {
     Stack < String > arr = new Stack < String > ();
     Decompiler() {}
-    int count = 0;  // Counter for variable names (x0, x1, etc.)
+    int count = 0; // Counter for variable names (x0, x1, etc.)
 
     void operationHelper(String operation) {
         int size = arr.size();
@@ -13,15 +13,15 @@ class Decompiler {
         // Normal operation between two elements
         if (size >= 2) {
             String firstTerm = arr.peek(); // Take top element from the stack
-            arr.pop();  // Pop top element off the stack
+            arr.pop(); // Pop top element off the stack
             String secondTerm = arr.peek(); // Repeat
             arr.pop();
 
-			// Check whether both elements are ints
+            // Check whether both elements are ints
             try {
-                int firstTermINT = Integer.parseInt(firstTerm); 
-                int secondTermINT = Integer.parseInt(secondTerm); 
-                if (operation.equals("+")){
+                int firstTermINT = Integer.parseInt(firstTerm);
+                int secondTermINT = Integer.parseInt(secondTerm);
+                if (operation.equals("+")) {
                     String output = Integer.toString(firstTermINT + secondTermINT);
                     arr.push(output);
                 } else if (operation.equals("-")) {
@@ -31,10 +31,10 @@ class Decompiler {
                     String output = Integer.toString(firstTermINT * secondTermINT);
                     arr.push(output);
                 }
-            } 
-			// If one element is not an int (ex: 1+(x0*2))
-			catch (Exception e){  
-                arr.push("("+firstTerm+operation+secondTerm+")"); 
+            }
+            // If one element is not an int (ex: 1+(x0*2))
+            catch (Exception e) {
+                arr.push("(" + firstTerm + operation + secondTerm + ")");
             }
         }
 
@@ -48,10 +48,11 @@ class Decompiler {
 
         // No terms on stack
         else {
-            arr.push("(x" + Integer.toString(count) + operation + "x" + Integer.toString(count+1) + ")");
-            count+=2;
+            arr.push("(x" + Integer.toString(count) + operation + "x" + Integer.toString(count + 1) + ")");
+            count += 2;
         }
     }
+
     // Add elements onto stack
     void add() {
         operationHelper("+");
@@ -67,7 +68,7 @@ class Decompiler {
 
     // If two elements are on the stack, swap them
     void swap() {
-        if (arr.size()>=2){
+        if (arr.size() >= 2) {
             String first = arr.peek();
             arr.pop();
             String second = arr.peek();
@@ -118,7 +119,7 @@ class DecompilerDriver {
             }
 
             // Capitalize input
-			inputs[0] = inputs[0].toUpperCase();
+            inputs[0] = inputs[0].toUpperCase();
 
             // Check input against various cases
             if (inputs[0].equals("ADD")) {
@@ -140,17 +141,17 @@ class DecompilerDriver {
                     } catch (Exception noPushValue) {
                         System.out.println("Requested PUSH without value. Please call PUSH followed by an integer (ex: PUSH 2).\n");
                     }
-                // If PUSH with non-int value
+                    // If PUSH with non-int value
                 } catch (Exception pushValueNotInt) {
-					System.out.println("Requested PUSH value is not of integer type. Please call PUSH followed by an integer (ex: PUSH 2).\n");
+                    System.out.println("Requested PUSH value is not of integer type. Please call PUSH followed by an integer (ex: PUSH 2).\n");
                 }
-            // If unrecognized operation is provided
+                // If unrecognized operation is provided
             } else {
-				System.out.println("Keyword not recognized. Please request either: PUSH <N>, ADD, SUB, MUL, SWAP, or END.\n");
-			}
+                System.out.println("Keyword not recognized. Please request either: PUSH <N>, ADD, SUB, MUL, SWAP, or END.\n");
+            }
         }
         // If something lives on the stack, output it
-        if (s.arr.size()>0)
+        if (s.arr.size() > 0)
             s.expression();
     }
 }
