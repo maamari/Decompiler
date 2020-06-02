@@ -3,8 +3,8 @@
 <br>
 
 This repository contains a simple stack-based decompiler. The implementation is provided in various languages, though the jupyter-notebook (aSimpleDecompiler.ipynb) is recommended.
----
 
+---
 ### Running the code:
 
 #### Jupyter-notebook
