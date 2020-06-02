@@ -13,15 +13,14 @@ int string_to_int(string s) {
 //class stack created
 class Stack {
 public:
-    int top;
+    int top, count=0;
 
-    vector <string> arr;
+    stack <string> arr;
     Stack() { top = -1; } //initializing empty stack;
 
     void push(string x);
     string Pop();
-    int size_of_stack();
-    bool isEmpty();
+    void operationHelper(string operation);
     void add();
     void sub();
     void mul();
@@ -29,7 +28,7 @@ public:
 };
 
 void Stack::push(string x) {
-    arr.push_back(x); //add the element into the array
+    arr.push(x); //add the element into the array
     top++; //increase top by one;
 }
 
@@ -39,96 +38,68 @@ string Stack::Pop() {
         return 0;
     }
     else {
-        string x = arr[top];  //top element in the string
-        arr.pop_back(); //remove the top element
+        string x = arr.top();  //top element in the string
+        arr.pop(); //remove the top element
         top--; //decrease the top value;
         return x;
     }
 }
 
-int Stack::size_of_stack() {
-    return arr.size(); //current size of stack;
+//print the stack
+void Stack::expression() {
+    cout << arr.top() << endl;
 }
 
-bool Stack::isEmpty() {
-    return (top < 0);
-}
-
-// add the top 2 elements in the stack, if less than 2 elements present create a variable and use it 
-void Stack::add() {
+// add the top 2 elements in the stack, if less than 2 elements present create a variable and use it
+void Stack::operationHelper(string operation) {
     int size = arr.size();
-    //size >=2
+
     if (size >= 2) {
-        int last = string_to_int(arr[top]); //take top element from the stack
-        top--;
-        arr.pop_back(); //remove top element
-        int s_last = string_to_int(arr[top]); //take new top element
-        top--;
-        arr.pop_back();  //remove top element
-        string stri = to_string(last + s_last);
-        arr.push_back(stri); //push sum of top two element into the stack
-        top++;
-    }
-        //if only one element present
-    else if (size == 1) {
-        string last = arr[top];
-        arr.pop_back();
-        arr.push_back("(x" + to_string(size) + "+" + last + ")");
-    }
-        //if no element present
-    else {
-        arr.push_back("(x" + to_string(size) + "+" + "x" + to_string(size + 1) + ")");
-        top++;
+        int last = string_to_int(arr.top()); //take top element from the stack
+        arr.pop(); //remove top element
+        int s_last = string_to_int(arr.top()); //take new top element
+        arr.pop();  //remove top element
+
+        if (operation == "+"){
+            string stri = to_string(last + s_last);
+            arr.push(stri); //push sum of top two element into the stack
+        } else if (operation == "-"){
+            string stri = to_string(last - s_last);
+            arr.push(stri); //push sum of top two element into the stack
+        } else if (operation == "*"){
+            string stri = to_string(last * s_last);
+            arr.push(stri); //push sum of top two element into the stack
+        }
     }
 
+    //if only one element present
+    else if (size == 1) {
+        string last = arr.top();
+        arr.pop();
+        arr.push("(x" + to_string(count) + operation + last + ")");
+        count++;
+    }
+
+    //if no element present
+    else {
+        arr.push("(x" + to_string(count) + operation + "x" + to_string(count+1) + ")");
+        count+=2;
+    }
+}
+
+// add the top 2 elements in the stack, if less than 2 elements present create a variable and use it
+void Stack::add() {
+    operationHelper("+");
 }
 
 // Subtract the top 2 elements in the stack, if less than 2 elements present create a variable and use it
 void Stack::sub() {
-    int size = arr.size();
-    if (size >= 2) {
-        int last = string_to_int(arr[top]);
-        top--;
-        arr.pop_back();
-        int s_last = string_to_int(arr[top]);
-        top--;
-        arr.pop_back();
-        string stri = to_string(last - s_last);
-        arr.push_back(stri);
-        top++;
-    } else if (size == 1) {
-        string last = arr[top];
-        arr.pop_back();
-        arr.push_back("(x" + to_string(size) + "-" + last + ")");
-    } else {
-        arr.push_back("(x" + to_string(size) + "-" + "x" + to_string(size + 1) + ")");
-        top++;
-    }
-
+    operationHelper("-");
 }
-// multiply the top 2 elements in the stack, if less than 2 elements present create a variable and use it 
 
+// multiply the top 2 elements in the stack, if less than 2 elements present create a variable and use it
 void Stack::mul() {
-    int size = arr.size();
-    if (size >= 2) {
-        int last = string_to_int(arr[top]);
-        top--;
-        arr.pop_back();
-        int s_last = string_to_int(arr[top]);
-        top--;
-        arr.pop_back();
-        string stri = to_string(last * s_last);
-        arr.push_back(stri);
-        top++;
-    } else if (size == 1) {
-        string last = arr[top];
-        arr.pop_back();
-        arr.push_back("(x" + to_string(size) + "*" + last + ")");
-
-    } else {
-        arr.push_back("(x" + to_string(size) + "*" + "x" + to_string(size + 1) + ")");
-        top++;
-    }
+    operationHelper("*");
 }
 
 //swap top two element
@@ -137,15 +108,6 @@ void swap(Stack &s) {
     string b = s.Pop();
     s.push(a);
     s.push(b);
-
-}
-
-//print the stack
-void Stack::expression() {
-
-    for (int i = arr.size(); i >= 0; i--) {
-        cout << arr[i] << endl;
-    }
 }
 
 int main() {
@@ -154,16 +116,21 @@ int main() {
     string val;
     s = Stack();
 
+    cout << "Enter operation name: " << endl;
+    cout << "  PUSH: Push an integer, N, to the stack" << endl;
+    cout << "  ADD: Add values from the stack" << endl;
+    cout << "  SUB: Subtract values from the stack" << endl;
+    cout << "  MUL: Multiply values from the stack" << endl;
+    cout << "  SWAP: Swap values from the stack" << endl;
+    cout << "  END: Enter END when finished with commands\n" << endl;
+
     while (1) {
-        cout << "Enter operation name:";
         string op;
         cin >> op;
         if (op == "PUSH") {
-            cout << "Enter value to be pushed";
+            cout << "Enter integer to be pushed: ";
             cin >> val;
             s.push(val);
-        } else if (op == "POP") {
-            s.Pop();
         } else if (op == "ADD") {
             s.add();
         } else if (op == "SUB") {
@@ -172,11 +139,9 @@ int main() {
             s.mul();
         } else if (op == "SWAP") {
             swap(s);
-        } else {
+        } else if (op == "END") {
             break;
         }
     }
-    if(s.size_of_stack()){
-        s.expression();
-    }
+    s.expression();
 }
