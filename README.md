@@ -15,7 +15,7 @@ To run the notebook, first make sure that you have jupyter-notebook installed on
 And then run the notebook<br>
 ```jupyter-notebook aSimpleDecompiler.ipynb```
    
-Go down to the cell titled "The input handler" and enter your inputs line-by-line as demonstrated below.
+Go to the cell titled "The input handler" and enter your inputs line-by-line as demonstrated below.
 
 #### C++
 To run the C++ file, execute the following (replacing g++ with your given compiler):<br>
