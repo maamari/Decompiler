@@ -37,11 +37,11 @@ And enter your inputs line-by-line as demonstrated below.
 Irrespective of which file you run, the input takes the following commands (entered line-by-line):
 ```
 PUSH <N>  # Pushes the given integer, N, onto the stack
-ADD  # Pops the two top values from the stack, adds them, and pushes the result
-SUB  # Pops the two top values from the stack, *subtracts* them, and pushes the result
-MUL  # Pops the two top values from the stack, *multiplies* them, and pushes the result
-SWAP  # Swaps the top two numbers from the stack
-END  # Ends the input stream and returns output
+ADD       # Pops the two top values from the stack, adds them, and pushes the result
+SUB       # Pops the two top values from the stack, *subtracts* them, and pushes the result
+MUL       # Pops the two top values from the stack, *multiplies* them, and pushes the result
+SWAP      # Swaps the top two numbers from the stack
+END       # Ends the input stream and returns output
 ```
 Note that the "END" keyword is cruicial in ending a given input stream and providing an output.
 
