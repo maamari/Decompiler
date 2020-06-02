@@ -8,7 +8,7 @@ public:
     stack <string> arr;
 
     int count=0;
-    void push(string x);
+    void push(string integer);
     string Pop();
     void operationHelper(string operation);
     void add();
@@ -19,71 +19,77 @@ public:
 };
 
 //convert string to int
-int string_to_int(string s) {
-    stringstream geek(s);
-    int x = 0;
-    geek >> x;
-    return x;
+int string_to_int(string str) {
+    stringstream geek(str);
+    int integer = 0;
+    geek >> integer;
+    return integer;
 }
 
-//print the stack
+// Print the top of the stack
 void Stack::expression() {
     cout << arr.top() << endl;
 }
 
-// add the top 2 elements in the stack, if less than 2 elements present create a variable and use it
+// Normal operation between two elements
 void Stack::operationHelper(string operation) {
     int size = arr.size();
 
     if (size >= 2) {
-        int last = string_to_int(arr.top()); //take top element from the stack
-        arr.pop(); //remove top element
-        int s_last = string_to_int(arr.top()); //take new top element
-        arr.pop();  //remove top element
-
-        if (operation == "+"){
-            string stri = to_string(last + s_last);
-            arr.push(stri); //push sum of top two element into the stack
-        } else if (operation == "-"){
-            string stri = to_string(last - s_last);
-            arr.push(stri); //push sum of top two element into the stack
-        } else if (operation == "*"){
-            string stri = to_string(last * s_last);
-            arr.push(stri); //push sum of top two element into the stack
+        string firstTerm = arr.top(); // Take top element from the stack
+        arr.pop(); // Remove top element
+        string secondTerm = arr.top(); // Repeat
+        arr.pop();
+        if (string_to_int(firstTerm) && string_to_int(secondTerm)){  // Check whether the elements are ints
+            int firstTermINT = string_to_int(firstTerm); // If so, continue with normal operation
+            int secondTermINT = string_to_int(secondTerm);
+            if (operation == "+"){
+                string output = to_string(firstTermINT + secondTermINT);
+                arr.push(output);
+            } else if (operation == "-"){
+                string output = to_string(firstTermINT - secondTermINT);
+                arr.push(output);
+            } else if (operation == "*"){
+                string output = to_string(firstTermINT * secondTermINT);
+                arr.push(output);
+            }
+        }
+        else { // If one element is not an int (ex: 1+(x0*2))
+            arr.push("("+firstTerm+operation+secondTerm+")");
         }
     }
 
-    //if only one element present
+    // Only one term on stack
     else if (size == 1) {
-        string last = arr.top();
+        string firstTerm = arr.top();
         arr.pop();
-        arr.push("(x" + to_string(count) + operation + last + ")");
+        arr.push("(integer" + to_string(count) + operation + firstTerm + ")");
         count++;
     }
 
-    //if no element present
+    // No terms on stack
     else {
-        arr.push("(x" + to_string(count) + operation + "x" + to_string(count+1) + ")");
+        arr.push("(integer" + to_string(count) + operation + "integer" + to_string(count+1) + ")");
         count+=2;
     }
 }
 
-// add the top 2 elements in the stack, if less than 2 elements present create a variable and use it
+// Add elements onto stack
 void Stack::add() {
     operationHelper("+");
 }
 
-// Subtract the top 2 elements in the stack, if less than 2 elements present create a variable and use it
+// Subtract elements onto stack
 void Stack::sub() {
     operationHelper("-");
 }
 
-// multiply the top 2 elements in the stack, if less than 2 elements present create a variable and use it
+// Multiply elements onto stack
 void Stack::mul() {
     operationHelper("*");
 }
 
-//swap top two element
+// If two elements are on the stack, swap them
 void Stack::swap() {
     if(arr.size()>=2) {
         string a = arr.top();
@@ -98,8 +104,8 @@ void Stack::swap() {
 }
 
 int main() {
-    Stack s;
-    s = Stack();
+    Stack str;
+    str = Stack();
 
     cout << "Enter operation name: " << endl;
     cout << "  PUSH <N>: Push an integer, N, to the stack" << endl;
@@ -109,33 +115,38 @@ int main() {
     cout << "  SWAP: Swap values from the stack" << endl;
     cout << "  END: Enter END when finished with commands\n" << endl;
 
-    string op;
+    string op;  // Operation
     while (cin >> op) {
-        int val;
+        int pushVal;
+        // Capitalize input
         for (auto &c: op) c = toupper(c);
 
         if (op == "ADD") {
-            s.add();
+            str.add();
         } else if (op == "SUB") {
-            s.sub();
+            str.sub();
         } else if (op == "MUL") {
-            s.mul();
+            str.mul();
         } else if (op == "SWAP") {
-            s.swap();
+            str.swap();
         } else if (op == "END") {
             break;
         } else if (op == "PUSH") {
-            cin >> val;
+            cin >> pushVal;
+            // If PUSH with non-int value
             if (cin.fail()) {
                 cin.clear();
                 cout << "Requested PUSH with non-integer value. Please call PUSH followed by an integer (ex: PUSH 2).\n"
                      << endl;
             } else {
-                s.arr.push(to_string(val));
+                str.arr.push(to_string(pushVal));
             }
+        // If non-keyword arg is provided
         } else {
             cout << "Keyword not recognized. Please request either: PUSH <N>, ADD, SUB, MUL, SWAP, or END.\n" << endl;
         }
     }
-    s.expression();
+    // If something lives on the stack, output it
+    if (str.arr.size()>0)
+        str.expression();
 }

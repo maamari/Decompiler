@@ -5,50 +5,63 @@ import java.lang.*;
 class Decompiler {
     Stack < String > arr = new Stack < String > ();
     Decompiler() {}
-    int count = 0;
+    int count = 0;  // Counter for variable names (x0, x1, etc.)
 
     void operationHelper(String operation) {
         int size = arr.size();
-        //size >=2
+
+        // Normal operation between two elements
         if (size >= 2) {
-            int last = Integer.parseInt(arr.peek()); //take top element from the stack
+            String firstTerm = arr.peek(); // Take top element from the stack
+            arr.pop();  // Pop top element off the stack
+            String secondTerm = arr.peek(); // Repeat
             arr.pop();
-            int s_last = Integer.parseInt(arr.peek()); //take new top element
-            arr.pop(); //remove top element
-            if (operation.equals("+")){
-                String stri = Integer.toString(last + s_last);
-                arr.push(stri);
-            } else if (operation.equals("-")) {
-                String stri = Integer.toString(last - s_last);
-                arr.push(stri);
-            } else if (operation.equals("*")) {
-                String stri = Integer.toString(last * s_last);
-                arr.push(stri);
+            try {
+                int firstTermINT = Integer.parseInt(firstTerm); // Check whether the elements are ints
+                int secondTermINT = Integer.parseInt(secondTerm);  // If so, continue with normal operation
+                if (operation.equals("+")){
+                    String output = Integer.toString(firstTermINT + secondTermINT);
+                    arr.push(output);
+                } else if (operation.equals("-")) {
+                    String output = Integer.toString(firstTermINT - secondTermINT);
+                    arr.push(output);
+                } else if (operation.equals("*")) {
+                    String output = Integer.toString(firstTermINT * secondTermINT);
+                    arr.push(output);
+                }
+            } catch (Exception e){  // If one element is not an int (ex: 1+(x0*2))
+                arr.push("("+firstTerm+operation+secondTerm+")");  // Concatenate
             }
         }
-        //if only one element present
+
+        // Only one term on stack
         else if (size == 1) {
-            String last = arr.peek();
+            String firstTerm = arr.peek();
             arr.pop();
-            arr.push("(x" + Integer.toString(count) + operation + last + ")");
+            arr.push("(x" + Integer.toString(count) + operation + firstTerm + ")");
             count++;
         }
-        //if no element present
+
+        // No terms on stack
         else {
             arr.push("(x" + Integer.toString(count) + operation + "x" + Integer.toString(count+1) + ")");
             count+=2;
         }
     }
-
+    // Add elements onto stack
     void add() {
         operationHelper("+");
     }
+    // Subtract elements onto stack
     void sub() {
         operationHelper("-");
     }
+    // Multiply elements onto stack
     void mul() {
         operationHelper("*");
     }
+
+    // If two elements are on the stack, swap them
     void swap() {
         if (arr.size()>=2){
             String first = arr.peek();
@@ -61,6 +74,8 @@ class Decompiler {
             System.out.println("Stack not large enough for swap.\n");
         }
     }
+
+    // Prints the top item in the stack
     void expression() {
         Collections.reverse(arr);
         System.out.println(arr.peek());
@@ -82,10 +97,26 @@ class DecompilerDriver {
         System.out.println("  END: Enter END when finished with commands\n");
 
         while (true) {
-            String input = sc.nextLine();
-			String[] inputs = input.split(" ");
+            String[] inputs;
+
+            // Check that an input exists
+            try {
+                String input = sc.nextLine();
+                inputs = input.split(" ");
+            } catch (Exception noMoreInput) {
+                break;
+            }
+
+            // If more than two inputs are provided, redo input
+            if (inputs.length > 2) {
+                System.out.println("Please use one command per line (ex: PUSH 2)\n");
+                continue;
+            }
+
+            // Capitalize input
 			inputs[0] = inputs[0].toUpperCase();
 
+            // Check input against various cases
             if (inputs[0].equals("ADD")) {
                 s.add();
             } else if (inputs[0].equals("SUB")) {
@@ -99,18 +130,23 @@ class DecompilerDriver {
             } else if (inputs[0].equals("PUSH")) {
                 try {
                     Integer.parseInt(inputs[1]);
+                    // If PUSH without value
                     try {
                         s.arr.push(inputs[1]);
-                    } catch (Exception e) {
+                    } catch (Exception noPushValue) {
                         System.out.println("Requested PUSH without value. Please call PUSH followed by an integer (ex: PUSH 2).\n");
                     }
-                } catch (Exception e) {
+                // If PUSH with non-int value
+                } catch (Exception pushValueNotInt) {
 					System.out.println("Requested PUSH value is not of integer type. Please call PUSH followed by an integer (ex: PUSH 2).\n");
                 }
+            // If non-keyword arg is provided
             } else {
 				System.out.println("Keyword not recognized. Please request either: PUSH <N>, ADD, SUB, MUL, SWAP, or END.\n");
 			}
         }
-        s.expression();
+        // If something lives on the stack, output it
+        if (s.arr.size()>0)
+            s.expression();
     }
 }
