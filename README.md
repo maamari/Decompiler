@@ -8,14 +8,14 @@ This repository contains a simple stack-based decompiler. The implementation is 
 ### Running the code:
 
 #### Jupyter-notebook
-To run the notebook, first make sure that you have jupyter installed on your system<br>
+Before running the notebook, first make sure that you have jupyter installed on your system<br>
 ```pip install jupyter```
 
 
-And then run the notebook<br>
+And then open the notebook<br>
 ```jupyter-notebook aSimpleDecompiler.ipynb```
    
-Go to the cell titled "The input handler" and enter your inputs line-by-line as demonstrated below.
+Run the "Decompiler class" and "Input handler" cells by simultaneously pressing SHIFT and ENTER. After you run the "Input handler" cell, you will be prompted for an input. Please follow the format explained below in the *Input format* section.
 
 #### C++
 To run the C++ file, execute the following (replacing g++ with your given compiler):<br>
@@ -23,7 +23,7 @@ To run the C++ file, execute the following (replacing g++ with your given compil
 g++ aSimpleDecompiler.cpp -o decompiler
 ./decompiler
 ```
-And enter your inputs line-by-line as demonstrated below.
+And enter your inputs line-by-line as explained below in the *Input format* section.
 
 #### Java
 To run the Java file, execute the following:<br>
