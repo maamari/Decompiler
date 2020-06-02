@@ -1,15 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//class stack created
 class Stack {
 public:
-    Stack() {} //initializing empty stack;
-    stack <string> arr;
+    Stack() {}
+    stack <string> stck;
 
-    int count=0;
-    void push(string value);
-    string Pop();
+    int varCounter=0; // Counter for variable names (x0, x1, etc.)
     void operationHelper(string operation);
     void add();
     void sub();
@@ -18,7 +15,7 @@ public:
     void expression();
 };
 
-//convert string to int
+// Convert string to int
 int string_to_int(string str) {
     stringstream geek(str);
     int integer = 0;
@@ -28,49 +25,52 @@ int string_to_int(string str) {
 
 // Print the top of the stack
 void Stack::expression() {
-    cout << arr.top() << endl;
+    cout << stck.top() << endl;
 }
 
-// Normal operation between two elements
 void Stack::operationHelper(string operation) {
-    int size = arr.size();
+    int stackSize = stck.size();
 
-    if (size >= 2) {
-        string firstTerm = arr.top(); // Take top element from the stack
-        arr.pop(); // Remove top element
-        string secondTerm = arr.top(); // Repeat
-        arr.pop();
-        if (string_to_int(firstTerm) && string_to_int(secondTerm)){  // Check whether the elements are ints
-            int firstTermINT = string_to_int(firstTerm); // If so, continue with normal operation
+	// Normal operation between two elements
+    if (stackSize >= 2) {
+        string firstTerm = stck.top(); // Take top element from the stack
+        stck.pop(); // Remove top element
+        string secondTerm = stck.top(); // Repeat
+        stck.pop();
+		
+		// If both elements are ints
+        if (string_to_int(firstTerm) && string_to_int(secondTerm)){  
+            int firstTermINT = string_to_int(firstTerm);
             int secondTermINT = string_to_int(secondTerm);
             if (operation == "+"){
                 string output = to_string(firstTermINT + secondTermINT);
-                arr.push(output);
+                stck.push(output);
             } else if (operation == "-"){
                 string output = to_string(firstTermINT - secondTermINT);
-                arr.push(output);
+                stck.push(output);
             } else if (operation == "*"){
                 string output = to_string(firstTermINT * secondTermINT);
-                arr.push(output);
+                stck.push(output);
             }
         }
-        else { // If one element is not an int (ex: 1+(x0*2))
-            arr.push("("+firstTerm+operation+secondTerm+")");
+		// If one element is not an int
+        else { 
+            stck.push("("+firstTerm+operation+secondTerm+")");
         }
     }
 
-    // Only one term on stack
-    else if (size == 1) {
-        string firstTerm = arr.top();
-        arr.pop();
-        arr.push("(x" + to_string(count) + operation + firstTerm + ")");
-        count++;
+    // Only one element on stack
+    else if (stackSize == 1) {
+        string firstTerm = stck.top();
+        stck.pop();
+        stck.push("(x" + to_string(varCounter) + operation + firstTerm + ")");
+        varCounter++;
     }
 
     // No terms on stack
     else {
-        arr.push("(x" + to_string(count) + operation + "x" + to_string(count+1) + ")");
-        count+=2;
+        stck.push("(x" + to_string(varCounter) + operation + "x" + to_string(varCounter+1) + ")");
+        varCounter+=2;
     }
 }
 
@@ -91,13 +91,13 @@ void Stack::mul() {
 
 // If two elements are on the stack, swap them
 void Stack::swap() {
-    if(arr.size()>=2) {
-        string a = arr.top();
-        arr.pop();
-        string b = arr.top();
-        arr.pop();
-        arr.push(a);
-        arr.push(b);
+    if(stck.size()>=2) {
+        string a = stck.top();
+        stck.pop();
+        string b = stck.top();
+        stck.pop();
+        stck.push(a);
+        stck.push(b);
     } else {
         cout << "Stack not large enough for swap.\n" << endl;
     }
@@ -115,43 +115,60 @@ int main() {
     cout << "  SWAP: Swap values from the stack" << endl;
     cout << "  END: Enter END when finished with commands\n" << endl;
 
-    string line, op;  // Input line, operation
-    vector<std::string> ops;  // Input line split up
-    while (getline(cin, line)) {    // While we can grab a line
-        // Check that input is valid
-        ops.clear();
-        stringstream ss(line);
-        while(ss >> op) // Split up line
-            ops.push_back(op); // And push into ops vector
-        for (auto &c: ops[0]) c = toupper(c); // Capitalize input
-        if (ops.size()>1) { // If more than one operation
-            if (ops.size()>2 || ops[0]!="PUSH") { // And not PUSH or more than 2 operations
-                cout << "Please use one command per line (ex: PUSH 2)\n" << endl;  // Throw error and redo
+    string inputLine, input;  // Input line, operation
+    vector<std::string> inputs;  // Split up input line
+    while (getline(cin, inputLine)) {  // While there is input to grab
+
+        inputs.clear();
+        stringstream ss(inputLine);
+
+        // Split up line and push into inputs vector
+        while(ss >> input)
+            inputs.push_back(input);
+
+        // Capitalize input
+        for (auto &c: inputs[0]) c = toupper(c);
+
+        /* Check that input is valid:
+         * There should not be more than one input per line
+         * unless the user is pushing, in which case there
+         * should only be two arguments, the second being
+         * the value to push */
+        int numberOfInputs = inputs.size();
+        if (numberOfInputs>1) {
+            // If not PUSH or more than 2 operations, print error message
+            if (numberOfInputs>2 || inputs[0]!="PUSH") {
+                cout << "Please use one command per line (ex: PUSH 2)\n" << endl;
                 continue;
-            } else if (!string_to_int(ops[1])) {  // If push value is invalid, throw error and redo
+            }
+            // If PUSH value is invalid, print error message
+            else if (!string_to_int(inputs[1])) {
                 cout << "Requested PUSH with non-integer value. Please call PUSH followed by an integer (ex: PUSH 2).\n" << endl;
                 continue;
             }
         }
-        if (ops[0] == "ADD") {
+
+        // Check user input against possible operations
+        if (inputs[0] == "ADD") {
             s.add();
-        } else if (ops[0] == "SUB") {
+        } else if (inputs[0] == "SUB") {
             s.sub();
-        } else if (ops[0] == "MUL") {
+        } else if (inputs[0] == "MUL") {
             s.mul();
-        } else if (ops[0] == "SWAP") {
+        } else if (inputs[0] == "SWAP") {
             s.swap();
-        } else if (ops[0] == "END") {
+        } else if (inputs[0] == "END") {
             break;
-        } else if (ops[0] == "PUSH") {
-            s.arr.push(ops[1]);
+        } else if (inputs[0] == "PUSH") {
+            s.stck.push(inputs[1]);
         }
-        // If non-keyword arg is provided
+        // If unrecognized operation is provided, print error message
         else {
             cout << "Keyword not recognized. Please request either: PUSH <N>, ADD, SUB, MUL, SWAP, or END.\n" << endl;
         }
     }
+
     // If something lives on the stack, output it
-    if (s.arr.size()>0)
+    if (s.stck.size()>0)
         s.expression();
 }

@@ -16,9 +16,11 @@ class Decompiler {
             arr.pop();  // Pop top element off the stack
             String secondTerm = arr.peek(); // Repeat
             arr.pop();
+
+			// Check whether both elements are ints
             try {
-                int firstTermINT = Integer.parseInt(firstTerm); // Check whether the elements are ints
-                int secondTermINT = Integer.parseInt(secondTerm);  // If so, continue with normal operation
+                int firstTermINT = Integer.parseInt(firstTerm); 
+                int secondTermINT = Integer.parseInt(secondTerm); 
                 if (operation.equals("+")){
                     String output = Integer.toString(firstTermINT + secondTermINT);
                     arr.push(output);
@@ -29,8 +31,10 @@ class Decompiler {
                     String output = Integer.toString(firstTermINT * secondTermINT);
                     arr.push(output);
                 }
-            } catch (Exception e){  // If one element is not an int (ex: 1+(x0*2))
-                arr.push("("+firstTerm+operation+secondTerm+")");  // Concatenate
+            } 
+			// If one element is not an int (ex: 1+(x0*2))
+			catch (Exception e){  
+                arr.push("("+firstTerm+operation+secondTerm+")"); 
             }
         }
 
@@ -107,7 +111,7 @@ class DecompilerDriver {
                 break;
             }
 
-            // If more than two inputs are provided, redo input
+            // If more than two inputs are provided, print error message
             if (inputs.length > 2) {
                 System.out.println("Please use one command per line (ex: PUSH 2)\n");
                 continue;
@@ -140,7 +144,7 @@ class DecompilerDriver {
                 } catch (Exception pushValueNotInt) {
 					System.out.println("Requested PUSH value is not of integer type. Please call PUSH followed by an integer (ex: PUSH 2).\n");
                 }
-            // If non-keyword arg is provided
+            // If unrecognized operation is provided
             } else {
 				System.out.println("Keyword not recognized. Please request either: PUSH <N>, ADD, SUB, MUL, SWAP, or END.\n");
 			}
