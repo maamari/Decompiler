@@ -19,7 +19,6 @@ public:
     string alphabet[26] = { "x","y","z","a","b","c","d","e","f","g","h","i",
                             "j","k","l","m","n","o","p","q","r",
                             "s","t","u","v","w"};
-    };
 };
 
 // Convert string to int
@@ -116,16 +115,17 @@ void Stack::simplify() {
 
     // resultant string of max length equal
     // to length of input string
-    char * res = new char(2 * len);
+    char* res = new char(2*len);
     int index = 0, i = 0;
 
     // create empty stack
-    stack < int > s;
-    stack < char > g;
+    stack<int> s;
+    stack<char> g;
     s.push(0);
 
     while (i < len) {
         if (str[i] == '+') {
+            // cout<<"++++ "<<endl;
             // If top is 1, flip the operator
             if (s.top() == 1)
                 res[index++] = '-';
@@ -135,70 +135,84 @@ void Stack::simplify() {
                 res[index++] = '+';
 
         } else if (str[i] == '-') {
+            // cout<<"----  "<<endl;
             if (s.top() == 1)
                 res[index++] = '+';
             else if (s.top() == 0)
                 res[index++] = '-';
-        } else if (str[i] == '*') {
-            if (str[i + 1] == '(') {
+        }
+        else if(str[i]=='*'){
+            if(str[i+1]=='('){
                 g.push('X');
-                int temp = index - 1;
-                while (temp >= 0 && res[temp] != '+' && res[temp] != '-') {
+                int temp=index-1;
+                while(temp>=0&&res[temp]!='+'&&res[temp]!='-'){
+                    // cout<<"inserting into stack g size -- "<<g.size()<<endl;
                     g.push(res[temp]);
                     temp--;
                 }
-                index = temp + 1;
-            } else {
-                //character ignore the *
-                res[index++] = '*';
+                index=temp+1;
             }
-        } else if (str[i] == '(' && i > 0) {
+            else{
+                //character ignore the *
+                res[index++]='*';
+            }
+        }
+        else if (str[i] == '(' && i == 0){
+            //Do nothing
+        }
+        else if (str[i] == '(' && i > 0) {
             if (str[i - 1] == '-') {
                 // x is opposite to the top of stack
                 int x = (s.top() == 1) ? 0 : 1;
                 s.push(x);
             }
 
-            // push value equal to top of the stack
+                // push value equal to top of the stack
             else if (str[i - 1] == '+')
                 s.push(s.top());
         }
 
-        // If closing parentheses pop the stack once
-        else if (str[i] == ')') {
+            // If closing parentheses pop the stack once
+        else if (str[i] == ')'){
             s.pop();
             //take care of g stack
-            while (!g.empty() && g.top() != 'X') {
+            while(!g.empty()&&g.top()!='X'){
                 g.pop();
             }
-            if (!g.empty() && g.top() == 'X') {
+            if(!g.empty()&&g.top()=='X'){
                 g.pop();
             }
         }
-
-        // copy the character to the result
-        else {
-            if (i - 1 >= 0 && !(str[i - 1] >= 'a' && str[i - 1] <= 'z')) {
-                queue < char > f;
-                while (!g.empty() && g.top() != 'X') {
+            // copy the character to the result
+        else{
+            if(i-1>=0&&!(str[i-1]>='x'&&str[i-1]<='x')){
+                queue<char> f;
+                while(!g.empty()&&g.top()!='X'){
+                    ///cout<<"hello  "<<g.top()<<endl;
                     f.push(g.top());
                     g.pop();
                 }
-                while (!f.empty()) {
-                    res[index++] = f.front();
+                while(!f.empty()){
+                    res[index++]=f.front();
                     g.push(f.front());
                     f.pop();
                 }
             }
             res[index++] = str[i];
+            // cout<<"wohoo"<<endl;
         }
         i++;
     }
-    res[index] = '\0';
-    int y = 0;
-    while (res[y] != 0) {
-        if (y > 0) {
-            if ((res[y] >= 'a' && res[y] <= 'z') && (res[y - 1] >= 'a' && res[y - 1] <= 'z')) {
+    res[index]='\0';
+    int y=0;
+    while(res[y]!=0){
+        if(y>0){
+            bool currentAlphabetic = (res[y] >= 'a' && res[y] <= 'z');
+            bool previousAlphabetic = (res[y - 1] >= 'a' && res[y - 1] <= 'z');
+            bool currentNumeric = isdigit(res[y]);
+            bool previousNumeric = isdigit(res[y - 1]);
+            if ((currentAlphabetic && (previousAlphabetic || previousNumeric)) ||
+               ((currentNumeric && previousAlphabetic))){
                 for (int j = index; j >= y; j--) {
                     res[j + 1] = res[j];
                 }
@@ -279,6 +293,6 @@ int main() {
     // If something lives on the stack, output it
     if (s.stck.size() > 0) {
         cout << s.expression() << endl;
-        s.simplify();
+//        s.simplify();
     }
 }
