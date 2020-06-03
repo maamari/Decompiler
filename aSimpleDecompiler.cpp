@@ -1,18 +1,25 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 
 class Stack {
 public:
     Stack() {}
-    stack <string> stck;
+    stack < string > stck;
 
-    int varCounter=0; // Counter for variable names (x0, x1, etc.)
     void operationHelper(string operation);
     void add();
     void sub();
     void mul();
     void swap();
-    void expression();
+    string expression();
+    void simplify();
+
+    int varCounter = 0; // Counter for variable names (x0, x1, etc.)
+    string alphabet[26] = { "x","y","z","a","b","c","d","e","f","g","h","i",
+                            "j","k","l","m","n","o","p","q","r",
+                            "s","t","u","v","w"};
+    };
 };
 
 // Convert string to int
@@ -21,11 +28,6 @@ int string_to_int(string str) {
     int integer = 0;
     geek >> integer;
     return integer;
-}
-
-// Print the top of the stack
-void Stack::expression() {
-    cout << stck.top() << endl;
 }
 
 void Stack::operationHelper(string operation) {
@@ -39,38 +41,38 @@ void Stack::operationHelper(string operation) {
         stck.pop();
 
         // If both elements are ints
-        if (string_to_int(firstTerm) && string_to_int(secondTerm)){
+        if (string_to_int(firstTerm) && string_to_int(secondTerm)) {
             int firstTermINT = string_to_int(firstTerm);
             int secondTermINT = string_to_int(secondTerm);
-            if (operation == "+"){
+            if (operation == "+") {
                 string output = to_string(firstTermINT + secondTermINT);
                 stck.push(output);
-            } else if (operation == "-"){
+            } else if (operation == "-") {
                 string output = to_string(firstTermINT - secondTermINT);
                 stck.push(output);
-            } else if (operation == "*"){
+            } else if (operation == "*") {
                 string output = to_string(firstTermINT * secondTermINT);
                 stck.push(output);
             }
         }
-            // If one element is not an int
+        // If one element is not an int
         else {
-            stck.push("("+firstTerm+operation+secondTerm+")");
+            stck.push("(" + firstTerm + operation + secondTerm + ")");
         }
     }
 
-        // Only one element on stack
+    // Only one element on stack
     else if (stackSize == 1) {
         string firstTerm = stck.top();
         stck.pop();
-        stck.push("(x" + to_string(varCounter) + operation + firstTerm + ")");
+        stck.push("(" + alphabet[varCounter] + operation + firstTerm + ")");
         varCounter++;
     }
 
-        // No terms on stack
+    // No terms on stack
     else {
-        stck.push("(x" + to_string(varCounter) + operation + "x" + to_string(varCounter+1) + ")");
-        varCounter+=2;
+        stck.push("(" + alphabet[varCounter] + operation + alphabet[varCounter + 1] + ")");
+        varCounter += 2;
     }
 }
 
@@ -91,7 +93,7 @@ void Stack::mul() {
 
 // If two elements are on the stack, swap them
 void Stack::swap() {
-    if(stck.size()>=2) {
+    if (stck.size() >= 2) {
         string a = stck.top();
         stck.pop();
         string b = stck.top();
@@ -101,6 +103,112 @@ void Stack::swap() {
     } else {
         cout << "Stack not large enough for swap.\n" << endl;
     }
+}
+
+// Print the top of the stack
+string Stack::expression() {
+    return stck.top();
+}
+
+void Stack::simplify() {
+    string str = expression();
+    int len = str.length();
+
+    // resultant string of max length equal
+    // to length of input string
+    char * res = new char(2 * len);
+    int index = 0, i = 0;
+
+    // create empty stack
+    stack < int > s;
+    stack < char > g;
+    s.push(0);
+
+    while (i < len) {
+        if (str[i] == '+') {
+            // If top is 1, flip the operator
+            if (s.top() == 1)
+                res[index++] = '-';
+
+            // If top is 0, append the same operator
+            if (s.top() == 0)
+                res[index++] = '+';
+
+        } else if (str[i] == '-') {
+            if (s.top() == 1)
+                res[index++] = '+';
+            else if (s.top() == 0)
+                res[index++] = '-';
+        } else if (str[i] == '*') {
+            if (str[i + 1] == '(') {
+                g.push('X');
+                int temp = index - 1;
+                while (temp >= 0 && res[temp] != '+' && res[temp] != '-') {
+                    g.push(res[temp]);
+                    temp--;
+                }
+                index = temp + 1;
+            } else {
+                //character ignore the *
+                res[index++] = '*';
+            }
+        } else if (str[i] == '(' && i > 0) {
+            if (str[i - 1] == '-') {
+                // x is opposite to the top of stack
+                int x = (s.top() == 1) ? 0 : 1;
+                s.push(x);
+            }
+
+            // push value equal to top of the stack
+            else if (str[i - 1] == '+')
+                s.push(s.top());
+        }
+
+        // If closing parentheses pop the stack once
+        else if (str[i] == ')') {
+            s.pop();
+            //take care of g stack
+            while (!g.empty() && g.top() != 'X') {
+                g.pop();
+            }
+            if (!g.empty() && g.top() == 'X') {
+                g.pop();
+            }
+        }
+
+        // copy the character to the result
+        else {
+            if (i - 1 >= 0 && !(str[i - 1] >= 'a' && str[i - 1] <= 'z')) {
+                queue < char > f;
+                while (!g.empty() && g.top() != 'X') {
+                    f.push(g.top());
+                    g.pop();
+                }
+                while (!f.empty()) {
+                    res[index++] = f.front();
+                    g.push(f.front());
+                    f.pop();
+                }
+            }
+            res[index++] = str[i];
+        }
+        i++;
+    }
+    res[index] = '\0';
+    int y = 0;
+    while (res[y] != 0) {
+        if (y > 0) {
+            if ((res[y] >= 'a' && res[y] <= 'z') && (res[y - 1] >= 'a' && res[y - 1] <= 'z')) {
+                for (int j = index; j >= y; j--) {
+                    res[j + 1] = res[j];
+                }
+                res[y] = '*';
+                index++;
+            }
+        }
+        y++;
+    }
+    cout << res << endl;
 }
 
 int main() {
@@ -115,19 +223,19 @@ int main() {
     cout << "  SWAP: Swap values from the stack" << endl;
     cout << "  END: Enter END when finished with commands\n" << endl;
 
-    string inputLine, input;  // Input line, operation
-    vector<std::string> inputs;  // Split up input line
-    while (getline(cin, inputLine)) {  // While there is input to grab
+    string inputLine, input; // Input line, operation
+    vector < std::string > inputs; // Split up input line
+    while (getline(cin, inputLine)) { // While there is input to grab
 
         inputs.clear();
         stringstream ss(inputLine);
 
         // Split up line and push into inputs vector
-        while(ss >> input)
+        while (ss >> input)
             inputs.push_back(input);
 
         // Capitalize input
-        for (auto &c: inputs[0]) c = toupper(c);
+        for (auto & c: inputs[0]) c = toupper(c);
 
         /* Check that input is valid:
          * There should not be more than one input per line
@@ -135,9 +243,9 @@ int main() {
          * should only be two arguments, the second being
          * the value to push */
         int numberOfInputs = inputs.size();
-        if (numberOfInputs>1) {
+        if (numberOfInputs > 1) {
             // If not PUSH or more than 2 operations, print error message
-            if (numberOfInputs>2 || inputs[0]!="PUSH") {
+            if (numberOfInputs > 2 || inputs[0] != "PUSH") {
                 cout << "Please use one command per line (ex: PUSH 2)\n" << endl;
                 continue;
             }
@@ -169,6 +277,8 @@ int main() {
     }
 
     // If something lives on the stack, output it
-    if (s.stck.size()>0)
-        s.expression();
+    if (s.stck.size() > 0) {
+        cout << s.expression() << endl;
+        s.simplify();
+    }
 }
