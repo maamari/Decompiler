@@ -1,4 +1,4 @@
-# A Simple Decompiler
+# A Simple Decompiler - SIMPLIFICATION IN PROGRESS
 ## Karime Maamari
 <br>
 
