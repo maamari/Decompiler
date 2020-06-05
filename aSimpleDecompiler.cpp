@@ -438,7 +438,7 @@ int main() {
             s.swap();
         } else if (inputs[0] == "END") {
             break;
-        } else if (inputs[0] == "PUSH") {
+        } else if (inputs[0] == "PUSH" && inputs.size()>1) {
             s.stck.push(inputs[1]);
         }
         // If unrecognized operation is provided, print error message
@@ -448,8 +448,16 @@ int main() {
     }
 
     // If something lives on the stack, output it
-    if (s.stck.size() > 0) {
-        cout << s.expression() << endl;
+    cout << "Would you like the output simplified? (Enter Y|N): ";
+    char simplifyQuery;
+    cin >> simplifyQuery;
+    if (toupper(simplifyQuery) == 'Y' &&  s.stck.size() > 0) {
         cout << s.simplify() << endl;
+    }
+    else if (toupper(simplifyQuery) == 'N' && s.stck.size() > 0) {
+        cout << s.expression() << endl;
+    }
+    else if (s.stck.size() > 0) {
+        cout << "Invalid entry.\n" << s.expression() << " = " << s.simplify() << endl;
     }
 }

@@ -14,7 +14,7 @@ PUSH 3
 MUL
 ADD
 END" | ./decompiler
-echo "Expected: ((3*2)+1)"
+echo "Expected: ((3*2)+1) = 7"
 echo ""
 
 echo "Test case 2 – Simple operations: 1+2*3"
@@ -24,7 +24,7 @@ MUL
 PUSH 1
 ADD
 END" | ./decompiler
-echo "Expected: (1+(3*2))"
+echo "Expected: (1+(3*2)) = 7"
 echo ""
 
 echo "Test case 3 – Simple operations: 2*x+1"
@@ -32,7 +32,7 @@ echo "PUSH 2
 MUL
 PUSH 1
 ADD" | ./decompiler
-echo "Expected: (1+(x*2))"
+echo "Expected: (1+(x*2)) = 1+2*x"
 echo ""
 
 echo "Test case 4 – Double digits"
@@ -40,7 +40,7 @@ echo "PUSH 10
 PUSH 20
 ADD
 END" | ./decompiler
-echo "Expected: (20+10)"
+echo "Expected: (20+10) = 30"
 echo ""
 
 echo "Test case 5 – Many variables"
@@ -53,7 +53,7 @@ MUL
 MUL
 ADD
 END" | ./decompiler
-echo "Expected: (f+(e*(d*(c+(b+(a+(z+(x+y))))))))"
+echo "Expected: (f+(e*(d*(c+(b+(a+(z+(x+y)))))))) = f+e*d*c+e*d*b+e*d*a+e*d*z+e*d*x+e*d*y"
 echo ""
 
 echo "Test case 6 – Swapping"
@@ -64,7 +64,7 @@ PUSH 3
 MUL
 ADD
 END" | ./decompiler
-echo "Expected: ((3*1)+2)"
+echo "Expected: ((3*1)+2) = 5"
 echo ""
 
 echo "Test case 7 – Lower-case, Swap"
@@ -75,7 +75,7 @@ push 3
 mul
 add
 end" | ./decompiler
-echo "Expected: ((3*1)+2)"
+echo "Expected: ((3*1)+2) = 5"
 echo ""
 
 echo "Test case 8 – Pushing letters"
@@ -86,7 +86,7 @@ push C
 mul
 add
 end" | ./decompiler
-echo "Expected: Error then (z+(x+y))"
+echo "Expected: Error then (z+(x+y)) = z+x*y"
 echo ""
 
 echo "Test case 9 – No end"
@@ -110,7 +110,7 @@ echo "PUSH 2
 PUSH 1
 SUB
 END" | ./decompiler
-echo "Expected: (1-2)"
+echo "Expected: (1-2) = -1"
 echo ""
 
 ################################################################
