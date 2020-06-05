@@ -13,7 +13,7 @@ public:
     void mul();
     void swap();
     string expression();
-    void simplify();
+    string simplify();
 
     int varCounter = 0; // Counter for variable names (x,y,z,a,b,...)
     string alphabet[26] = { "x","y","z","a","b","c","d","e","f","g","h","i",
@@ -90,7 +90,7 @@ string Stack::expression() {
     return stck.top();
 }
 
-void Stack::simplify() {
+string Stack::simplify() {
     /* IN CONSTRUCTION:
      * Attempting to use a different (stack-based)
      * algorithm than that employed in the
@@ -99,152 +99,287 @@ void Stack::simplify() {
      */
 
     // Take in unsimplified input from expression()
-    string str = expression();
-    int len = str.length();
+    string inputString = expression();
 
-    // Resultant string
-    char* result = new char(2*len);
-    int index = 0, i = 0;
-
-    /* Flag for "...-(...)" cases
-     * Ex: a-(b-c) = a-b+c */
-    stack<int> subFlag;
-    subFlag.push(0);
-
-    /* Stack for "...*(...)" cases
-     * Ex: a*(b-c) = a*b-a*c */
-    deque<char> mulStack;
-
-    while (i < len) {
-        cout << "currently at " << str[i] << endl;
-
-        // Skip initial opening parenthesis
-        if (str[i] == '(' && i == 0){
-            i++;
-            continue;
-        }
-
-        // If infamous "-(...)" case, switch on subFlag
-        // This will switch the sign of operations to follow
-        else if (str[i] == '(' && i > 0) {
-            if (str[i - 1] == '-') {
-                int flagVal = (subFlag.top() == 1) ? 0 : 1;
-                subFlag.push(flagVal);
-            }
-        }
-
-        // Addition
-        else if (str[i] == '+') {
-            /* If subFlag flag is on, that means
-             * we're currently within a "-(...)"
-             * so switch sign */
-            if (subFlag.top() == 1){
-                result[index++] = '-';
-                cout << "adding -" << endl;
-            }
-            // Otherwise, business as usual
-            if (subFlag.top() == 0) {
-                result[index++] = '+';
-                cout << "adding +" << endl;
-            }
-        }
-
-        // Subtraction
-        else if (str[i] == '-') {
-            /* If subFlag flag is on, that means
-             * we're currently within a "-(...)"
-             * so switch sign */
-            if (subFlag.top() == 1) {
-                result[index++] = '+';
-                cout << "adding +" << endl;
-            }
-                // Otherwise business as usual
-            else if (subFlag.top() == 0) {
-                result[index++] = '-';
-                cout << "adding -" << endl;
-            }
-        }
-
-        // Multiplication
-        else if(str[i]=='*'){
-            // If we're in a "*(...)" case
-            if(str[i+1]=='('){
-                // Push the flag which tells us that we're in this debacle
-                // This will be read as we are popping terms off the stack later
-                mulStack.push_front('X');
-
-                /* Create traverser to iterate backwards and add values
-                 * to the multiplication stack, ignoring +/- operators */
-                int reverseTraverser = index-1;
-                while(reverseTraverser >= 0 && result[reverseTraverser]!='+' && result[reverseTraverser]!='-'){
-                    mulStack.push_front(result[reverseTraverser]);
-                    reverseTraverser--;
-                }
-                // Deep copy was used in reverseTraverser so reset the index iterator
-                index=reverseTraverser+1;
-            }
-
-            // Otherwise business as usual
-            else {
-                result[index++]='*';
-                cout << "adding *" << endl;
-            }
-        }
-
-        // Closing parenthesis
-        else if (str[i] == ')'){
-            // Pop the current subtraction flag
-            subFlag.pop();
-
-            // Clean out the multiplication stack
-            // 'X' flag tells us when this grouping is done
-            while(!mulStack.empty() && mulStack.front()!='X'){
-                mulStack.pop_front();
-            }
-            // Pop once more to get rid off the 'X' flag
-            if(!mulStack.empty() && mulStack.front()=='X'){
-                mulStack.pop_front();
-            }
-        }
-
-        // Otherwise
-        else {
-            if (i-1>=0) {
-                queue<char> reverseMul;
-                // Push the multiplication stack to
-                // 'X' flag tells us when this grouping is done
-                deque<char> tempStack = mulStack;
-                while(!tempStack.empty() && tempStack.front()!='X'){
-                    cout << "adding from mulstack" << mulStack.front() << endl;
-                    result[index++]=tempStack.front();
-                    tempStack.pop_front();
-                }
-            }
-            cout << "adding normally " << str[i] << endl;
-            result[index++] = str[i];
-        }
-        i++;
+    // Covert it to a vector
+    vector<string> stringVec;
+    for(int i = 0; i < inputString.length(); i++)
+    {
+        string temp;
+        temp += inputString[i];
+        stringVec.push_back(temp);
     }
-    result[index]='\0';
-    int y=0;
-    while(result[y]!=0){
-        if(y>0){
-            bool currentAlphabetic = (result[y] >= 'a' && result[y] <= 'z');
-            bool previousAlphabetic = (result[y - 1] >= 'a' && result[y - 1] <= 'z');
-            bool currentNumeric = isdigit(result[y]);
-            bool previousNumeric = isdigit(result[y - 1]);
-            if ((currentAlphabetic && (previousAlphabetic || previousNumeric)) ||
-                ((currentNumeric && previousAlphabetic))){
-                for (int j = index; j >= y; j--) {
-                    result[j + 1] = result[j];
-                }
-                result[y] = '*';
-                index++;
+    // Combine two or more digits
+    // Ex: ['(','1','2','+','1',')'] -> ['(','12','+','1',')']
+    int index = 0;
+    while(index < stringVec.size())
+    {
+        while(index >= 0 && (index+1 < stringVec.size())
+              && isdigit((int)stringVec[index][0]) &&
+              isdigit((int)stringVec[index+1][0]))
+        {
+            stringVec[index] += stringVec[index+1];
+            stringVec.erase(stringVec.begin() + index+1);
+            index -= 1;
+        }
+        index += 1;
+    }
+
+    // While there are open parentheses
+    while(find(stringVec.begin(), stringVec.end(), "(") != stringVec.end())
+    {
+        // Flip the string so that and  find the first open paren index
+        // Ex: Original string = "(a+(b+c))", Flipped = "))c+b(+a("
+        auto rit = std::find(stringVec.rbegin(), stringVec.rend(), "(");
+        int openParenIndex = std::distance(begin(stringVec), rit.base()) -1;
+
+        // If we are dealing with "-(....)" case
+        // Wwitch the operator sign if + or -
+        if(openParenIndex > 0 && stringVec[openParenIndex-1] == "-")
+        {
+            int tempIndex = openParenIndex+2;
+            // Until we reach the close paren
+            while(stringVec[tempIndex] != ")")
+            {
+                if(stringVec[tempIndex] == "+")
+                    stringVec[tempIndex] = "-";
+                else if(stringVec[tempIndex] == "-")
+                    stringVec[tempIndex] = "+";
+                tempIndex += 2;
             }
         }
-        y++;
+
+        // If we are dealing with *(...) case
+        else if(openParenIndex > 0 && stringVec[openParenIndex-1] == "*")
+        {
+            // 2 steps past the open paren is the operator
+            int tempIndex = openParenIndex+2;
+            // Until we reach the close paren
+            while(stringVec[tempIndex] != ")")
+            {
+                if(stringVec[tempIndex] == "+" ||
+                   stringVec[tempIndex] == "-")
+                {
+                    stringVec.insert(stringVec.begin() + tempIndex+1, "*");
+                    stringVec.insert(stringVec.begin() + tempIndex+1, stringVec[openParenIndex-2]);
+                }
+                tempIndex += 1;
+            }
+        }
+
+        // Delete parenthesis pairing
+        stringVec.erase(stringVec.begin() + openParenIndex);
+        auto it = std::find(stringVec.begin(), stringVec.end(), ")");
+        stringVec.erase(it);
     }
-    cout << result << endl;
+
+    // Delete *1 cases
+    index = 0;
+    while(index < stringVec.size())
+    {
+        bool deletionFlag = false;
+        // If current is a digit (necessary check for the next condition, otherwise error thrown)
+        // and this digit is an int which is preceded by * -> delete the *1
+        if(index > 0 && isdigit(stringVec[index][0]) &&
+           stringVec[index] == "1" && stringVec[index-1] == "*")
+        {
+            stringVec.erase(stringVec.begin() + index);
+            stringVec.erase(stringVec.begin() + index-1);
+            deletionFlag = true;
+        }
+        index += 1;
+        if(deletionFlag)
+            index -= 2;
+    }
+
+    // Find first multiplicative integer
+    bool multIntExists = false;
+    int firstIntIndex = 0;
+    index = 1;
+    while(index < stringVec.size())
+    {
+        // If previous index is int and next index yields *
+        // Mark as first int
+        if(index > 0 && isdigit(stringVec[index-1][0]) &&
+           stringVec[index] == "*")
+        {
+            firstIntIndex = index-1;
+            multIntExists = true;
+            break;
+        }
+        index++;
+    }
+
+    // Combine multiplicative ints
+    if(multIntExists)
+    {
+        // First multiplicative ints
+        int multTerms = stoi(stringVec[firstIntIndex]);
+        // Indexer for this loop
+        int multIndexer = firstIntIndex+1;
+
+        // Loop through string and combne all multiplicative terms
+        while(multIndexer < stringVec.size())
+        {
+            bool deletionFlag = false;
+            if(isdigit(stringVec[multIndexer][0]) &&
+               stringVec[multIndexer-1] == "*" &&
+               stringVec[multIndexer] != "1")
+            {
+                multTerms *= stoi(stringVec[multIndexer]);
+                stringVec.erase(stringVec.begin() + multIndexer);
+                stringVec.erase(stringVec.begin() + multIndexer-1);
+                deletionFlag = true;
+            }
+
+            stringVec[firstIntIndex] = to_string(multTerms);
+            multIndexer += 1;
+            if(deletionFlag)
+                multIndexer -= 2;
+        }
+    }
+
+    // Find first additive/subtractive int
+    bool intExists = false;
+    index = 0;
+    while(index < stringVec.size())
+    {
+        bool currentIsDigit = isdigit(stringVec[index][0]);
+        bool nextIsOperator = false;
+        if((index+1) < stringVec.size() &&
+           (stringVec[index+1] == "+" || stringVec[index+1] == "-"))
+            nextIsOperator = true;
+        bool previousWasOperator = false;
+        if(index >0 &&
+           (stringVec[index-1] == "+" || stringVec[index-1] == "-"))
+            previousWasOperator = true;
+        bool atBeginning = (index == 0);
+
+        // If the current value is an int followed by an operator and it's either at the beginning
+        // or preceded by an int, then that is the first int!
+        if(currentIsDigit && nextIsOperator && (atBeginning || previousWasOperator))
+        {
+            firstIntIndex = index;
+            intExists = true;
+            break;
+        }
+        index++;
+    }
+
+    // If we have additive/subtractive int
+    if(intExists)
+    {
+        // Find term of sum
+        int intSum = stoi(stringVec[firstIntIndex]);
+        // Indexer for this loop
+        int intIndexer = firstIntIndex+1;
+
+        while(intIndexer < stringVec.size())
+        {
+            bool deletionFlag = false;
+            bool currentIsDigit = false;
+            if(isdigit(stringVec[intIndexer][0]))
+                currentIsDigit = true;
+            bool prevIsOper = false;
+            if(stringVec[intIndexer-1] == "+" ||
+               stringVec[intIndexer-1] == "-")
+                prevIsOper = true;
+            bool atEnd = (intIndexer == (stringVec.size()-1));
+
+            // If current value is preceded by +/- and we're at the end or the next value
+            // is not * -> valid term -> add to the sum
+            if(currentIsDigit && prevIsOper && (atEnd || stringVec[intIndexer+1] != "*"))
+            {
+                if(stringVec[intIndexer-1] == "+")
+                    intSum += stoi(stringVec[intIndexer]);
+                if(stringVec[intIndexer-1] == "-")
+                    intSum -= stoi(stringVec[intIndexer]);
+                stringVec.erase(stringVec.begin() + intIndexer-1);
+                stringVec.erase(stringVec.begin() + intIndexer-1);
+                deletionFlag = true;
+            }
+
+            stringVec[firstIntIndex] = to_string(intSum);
+            intIndexer++;
+            if(deletionFlag)
+                intIndexer -= 2;
+        }
+    }
+
+    //delete +/- 0 cases
+    index = 0;
+    while(index < stringVec.size())
+    {
+        int toDelete = 0;
+        if(isdigit(stringVec[index][0]))
+        {
+            if(stoi(stringVec[index]) == 0)
+            {
+                bool atBeginning = (index == 0);
+                bool atEnd = (index == (stringVec.size()-1));
+                bool nextOperPos = false;
+                bool nextOperNeg = false;
+                if((index+1 < stringVec.size()))
+                {
+                    if(stringVec[index+1] == "+")
+                        nextOperPos = true;
+                    if(stringVec[index+1] == "-")
+                        nextOperNeg = true;
+                }
+                bool prevIsOper = false;
+                if(index > 0 && (stringVec[index-1] == "+" || stringVec[index-1] == "-"))
+                    prevIsOper = true;
+
+                // If "0+..."
+                if(atBeginning && (nextOperPos || nextOperNeg))
+                {
+                    stringVec.erase(stringVec.begin() + index);
+                    toDelete++;
+                    if(nextOperPos)
+                    {
+                        stringVec.erase(stringVec.begin() + index);
+                        toDelete++;
+                    }
+                }
+                else if((atEnd && prevIsOper) ||
+                        (prevIsOper && (nextOperPos || nextOperNeg)))
+                {
+                    stringVec.erase(stringVec.begin() + index-1);
+                    stringVec.erase(stringVec.begin() + index-1);
+                    toDelete = 2;
+                }
+            }
+        }
+        index++;
+        if(toDelete > 0)
+            index -= toDelete;
+    }
+
+    // Purely aesthetic but make sure ints are at the beginning of products
+    index = stringVec.size() - 2;
+    while(index > 0)
+    {
+        bool currIsOper = (stringVec[index] == "*");
+        bool nextIsInt = isdigit(stringVec[index+1][0]);
+        bool prevIsNotInt = !isdigit(stringVec[index-1][0]);
+
+        //if "var*int"
+        if(currIsOper && nextIsInt && prevIsNotInt)
+        {
+            //swap var and int positions
+            string temp = stringVec[index-1];
+            stringVec[index-1] = stringVec[index+1];
+            stringVec[index+1] = temp;
+        }
+        index--;
+    }
+
+    string result;
+    for(int i = 0; i < stringVec.size(); i++)
+    {
+        result += stringVec[i];
+    }
+    return result;
 }
 
 int main() {
@@ -315,6 +450,6 @@ int main() {
     // If something lives on the stack, output it
     if (s.stck.size() > 0) {
         cout << s.expression() << endl;
-//        s.simplify();
+        cout << s.simplify() << endl;
     }
 }
