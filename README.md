@@ -2,7 +2,7 @@
 ## Karime Maamari
 <br>
 
-This repository contains a simple, stack-based decompiler. The implementation is provided in three languages: Python (jupyter-notebook), Java, and C++. All three files operate in a similar manner aside from a simplifier in the jupyter-notebook which has yet to be implemented in the Java/C++ versions. 
+This repository contains a simple, stack-based decompiler. The implementation is provided in three languages: Python (jupyter-notebook), Java, and C++. There are simplifiers in both the Python (jupyter-notebook) and C++ implementations but *not* yet in the Java implementation. 
 
 ---
 ### Running the code:
@@ -52,7 +52,7 @@ MUL
 ADD
 END
 ```
-Will push the expression ((3*2)+1) to the top of the stack. Then the simplifier (currently only implemented in the jupyter-notebook) can simplify the expression at the top of the stack (in this case to 7).
+Will push the expression ((3*2)+1) to the top of the stack. Then the simplifier (currently implemented in the jupyter-notebook and C++) can simplify the expression at the top of the stack (in this case to 7).
 
 ---
 ### Test cases:
