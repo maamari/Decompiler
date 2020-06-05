@@ -5,6 +5,7 @@ import java.lang.*;
 class Decompiler {
     Stack < String > arr = new Stack < String > ();
     Decompiler() {}
+    char[] alphabet = "xyzabcdefghijklmnopqrstuvw".toCharArray();
     int count = 0; // Counter for variable names (x0, x1, etc.)
 
     void operationHelper(String operation) {
@@ -16,39 +17,20 @@ class Decompiler {
             arr.pop(); // Pop top element off the stack
             String secondTerm = arr.peek(); // Repeat
             arr.pop();
-
-            // Check whether both elements are ints
-            try {
-                int firstTermINT = Integer.parseInt(firstTerm);
-                int secondTermINT = Integer.parseInt(secondTerm);
-                if (operation.equals("+")) {
-                    String output = Integer.toString(firstTermINT + secondTermINT);
-                    arr.push(output);
-                } else if (operation.equals("-")) {
-                    String output = Integer.toString(firstTermINT - secondTermINT);
-                    arr.push(output);
-                } else if (operation.equals("*")) {
-                    String output = Integer.toString(firstTermINT * secondTermINT);
-                    arr.push(output);
-                }
-            }
-            // If one element is not an int (ex: 1+(x0*2))
-            catch (Exception e) {
-                arr.push("(" + firstTerm + operation + secondTerm + ")");
-            }
+            arr.push("(" + firstTerm + operation + secondTerm + ")");
         }
 
         // Only one term on stack
         else if (size == 1) {
             String firstTerm = arr.peek();
             arr.pop();
-            arr.push("(x" + Integer.toString(count) + operation + firstTerm + ")");
+            arr.push("(" + alphabet[count] + operation + firstTerm + ")");
             count++;
         }
 
         // No terms on stack
         else {
-            arr.push("(x" + Integer.toString(count) + operation + "x" + Integer.toString(count + 1) + ")");
+            arr.push("(" + alphabet[count] + operation + alphabet[count+1] + ")");
             count += 2;
         }
     }

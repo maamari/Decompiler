@@ -1,4 +1,4 @@
-# A Simple Decompiler - SIMPLIFICATION IN PROGRESS
+# A Simple Decompiler
 ## Karime Maamari
 <br>
 
@@ -52,7 +52,7 @@ MUL
 ADD
 END
 ```
-Will yield an output of 7
+Will push the expression ((3*2)+1) to the top of the stack. Then the simplifier (currently only implemented in the jupyter-notebook) can simplify the expression at the top of the stack (in this case to 7).
 
 ---
 ### Test cases:

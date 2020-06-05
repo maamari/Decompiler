@@ -15,7 +15,7 @@ public:
     string expression();
     void simplify();
 
-    int varCounter = 0; // Counter for variable names (x0, x1, etc.)
+    int varCounter = 0; // Counter for variable names (x,y,z,a,b,...)
     string alphabet[26] = { "x","y","z","a","b","c","d","e","f","g","h","i",
                             "j","k","l","m","n","o","p","q","r",
                             "s","t","u","v","w"};
@@ -41,7 +41,7 @@ void Stack::operationHelper(string operation) {
         stck.push("(" + firstTerm + operation + secondTerm + ")");
     }
 
-    // Only one element on stack
+        // Only one element on stack
     else if (stackSize == 1) {
         string firstTerm = stck.top();
         stck.pop();
@@ -49,7 +49,7 @@ void Stack::operationHelper(string operation) {
         varCounter++;
     }
 
-    // No terms on stack
+        // No terms on stack
     else {
         stck.push("(" + alphabet[varCounter] + operation + alphabet[varCounter + 1] + ")");
         varCounter += 2;
@@ -91,10 +91,17 @@ string Stack::expression() {
 }
 
 void Stack::simplify() {
+    /* IN CONSTRUCTION:
+     * Attempting to use a different (stack-based)
+     * algorithm than that employed in the
+     * jupyter-notebook; however, current approach
+     * is buggy.
+     */
+
     // Take in unsimplified input from expression()
     string str = expression();
     int len = str.length();
-    
+
     // Resultant string
     char* result = new char(2*len);
     int index = 0, i = 0;
@@ -106,20 +113,24 @@ void Stack::simplify() {
 
     /* Stack for "...*(...)" cases
      * Ex: a*(b-c) = a*b-a*c */
-    stack<char> mulStack;
+    deque<char> mulStack;
 
     while (i < len) {
+        cout << "currently at " << str[i] << endl;
+
         // Skip initial opening parenthesis
         if (str[i] == '(' && i == 0){
             i++;
             continue;
         }
 
-        // If infamous "-(" case, switch on subFlag
+        // If infamous "-(...)" case, switch on subFlag
         // This will switch the sign of operations to follow
-        else if (str[i] == '(' && i > 0 && str[i-1] == '-') {
-            int flagValue = (subFlag.top() == 1) ? 0 : 1;
-            subFlag.push(flagValue);
+        else if (str[i] == '(' && i > 0) {
+            if (str[i - 1] == '-') {
+                int flagVal = (subFlag.top() == 1) ? 0 : 1;
+                subFlag.push(flagVal);
+            }
         }
 
         // Addition
@@ -127,12 +138,15 @@ void Stack::simplify() {
             /* If subFlag flag is on, that means
              * we're currently within a "-(...)"
              * so switch sign */
-            if (subFlag.top() == 1)
+            if (subFlag.top() == 1){
                 result[index++] = '-';
-
+                cout << "adding -" << endl;
+            }
             // Otherwise, business as usual
-            if (subFlag.top() == 0)
+            if (subFlag.top() == 0) {
                 result[index++] = '+';
+                cout << "adding +" << endl;
+            }
         }
 
         // Subtraction
@@ -140,12 +154,15 @@ void Stack::simplify() {
             /* If subFlag flag is on, that means
              * we're currently within a "-(...)"
              * so switch sign */
-            if (subFlag.top() == 1)
+            if (subFlag.top() == 1) {
                 result[index++] = '+';
-            
-            // Otherwise business as usual
-            else if (subFlag.top() == 0)
+                cout << "adding +" << endl;
+            }
+                // Otherwise business as usual
+            else if (subFlag.top() == 0) {
                 result[index++] = '-';
+                cout << "adding -" << endl;
+            }
         }
 
         // Multiplication
@@ -154,13 +171,13 @@ void Stack::simplify() {
             if(str[i+1]=='('){
                 // Push the flag which tells us that we're in this debacle
                 // This will be read as we are popping terms off the stack later
-                mulStack.push('X');
+                mulStack.push_front('X');
 
                 /* Create traverser to iterate backwards and add values
                  * to the multiplication stack, ignoring +/- operators */
                 int reverseTraverser = index-1;
                 while(reverseTraverser >= 0 && result[reverseTraverser]!='+' && result[reverseTraverser]!='-'){
-                    mulStack.push(result[reverseTraverser]);
+                    mulStack.push_front(result[reverseTraverser]);
                     reverseTraverser--;
                 }
                 // Deep copy was used in reverseTraverser so reset the index iterator
@@ -170,6 +187,7 @@ void Stack::simplify() {
             // Otherwise business as usual
             else {
                 result[index++]='*';
+                cout << "adding *" << endl;
             }
         }
 
@@ -180,28 +198,29 @@ void Stack::simplify() {
 
             // Clean out the multiplication stack
             // 'X' flag tells us when this grouping is done
-            while(!mulStack.empty() && mulStack.top()!='X'){
-                mulStack.pop();
+            while(!mulStack.empty() && mulStack.front()!='X'){
+                mulStack.pop_front();
             }
             // Pop once more to get rid off the 'X' flag
-            if(!mulStack.empty() && mulStack.top()=='X'){
-                mulStack.pop();
+            if(!mulStack.empty() && mulStack.front()=='X'){
+                mulStack.pop_front();
             }
         }
-            // copy the character to the result
-        else{
+
+        // Otherwise
+        else {
             if (i-1>=0) {
-                queue<char> f;
-                while(!mulStack.empty() && mulStack.top()!='X'){
-                    f.push(mulStack.top());
-                    mulStack.pop();
-                }
-                while(!f.empty()){
-                    result[index++]=f.front();
-                    mulStack.push(f.front());
-                    f.pop();
+                queue<char> reverseMul;
+                // Push the multiplication stack to
+                // 'X' flag tells us when this grouping is done
+                deque<char> tempStack = mulStack;
+                while(!tempStack.empty() && tempStack.front()!='X'){
+                    cout << "adding from mulstack" << mulStack.front() << endl;
+                    result[index++]=tempStack.front();
+                    tempStack.pop_front();
                 }
             }
+            cout << "adding normally " << str[i] << endl;
             result[index++] = str[i];
         }
         i++;
@@ -215,7 +234,7 @@ void Stack::simplify() {
             bool currentNumeric = isdigit(result[y]);
             bool previousNumeric = isdigit(result[y - 1]);
             if ((currentAlphabetic && (previousAlphabetic || previousNumeric)) ||
-               ((currentNumeric && previousAlphabetic))){
+                ((currentNumeric && previousAlphabetic))){
                 for (int j = index; j >= y; j--) {
                     result[j + 1] = result[j];
                 }
@@ -287,7 +306,7 @@ int main() {
         } else if (inputs[0] == "PUSH") {
             s.stck.push(inputs[1]);
         }
-            // If unrecognized operation is provided, print error message
+        // If unrecognized operation is provided, print error message
         else {
             cout << "Keyword not recognized. Please request either: PUSH <N>, ADD, SUB, MUL, SWAP, or END.\n" << endl;
         }
@@ -296,6 +315,6 @@ int main() {
     // If something lives on the stack, output it
     if (s.stck.size() > 0) {
         cout << s.expression() << endl;
-        s.simplify();
+//        s.simplify();
     }
 }
