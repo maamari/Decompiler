@@ -52,7 +52,14 @@ MUL
 ADD
 END
 ```
-Will push the expression ((3*2)+1) to the top of the stack. Then the simplifier (currently implemented in the jupyter-notebook and C++) can simplify the expression at the top of the stack (in this case to 7).
+Will push the expression ((3*2)+1) to the top of the stack. 
+
+The user is then prompted to select whether or not they would like to simplify the top of the stack or not.
+```
+Would you like the output simplified? (Enter Y|N): 
+Y
+7
+```
 
 ---
 ### Test cases:
