@@ -54,7 +54,7 @@ END
 ```
 Will push the expression ((3*2)+1) to the top of the stack. 
 
-The user is then prompted to select whether or not they would like to simplify the top of the stack or not.
+The user is then prompted to enter whether or not they would like to simplify the top of the stack or not.
 ```
 Would you like the output simplified? (Enter Y|N): 
 Y
