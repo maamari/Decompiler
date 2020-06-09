@@ -43,7 +43,7 @@ void Stack::operationHelper(string operation) {
         stck.push("(" + firstTerm + operation + secondTerm + ")");
     }
 
-        // Only one element on stack
+    // Only one element on stack
     else if (stackSize == 1) {
         string firstTerm = stck.top();
         stck.pop();
@@ -51,7 +51,7 @@ void Stack::operationHelper(string operation) {
         varCounter++;
     }
 
-        // No terms on stack
+    // No terms on stack
     else {
         stck.push("(" + alphabet[varCounter] + operation + alphabet[varCounter + 1] + ")");
         varCounter += 2;
@@ -132,7 +132,6 @@ void Stack::combinationHelper(vector<string> &currentStr, int firstIntIndex, str
         if(deletionFlag)
             indexer -= 2;
     }
-//    return currentStr;
 }
 
 vector<string> Stack::parenthesesHelper(vector<string> currentStr, int openParenIndex, string operation) {
@@ -140,10 +139,7 @@ vector<string> Stack::parenthesesHelper(vector<string> currentStr, int openParen
     // Until we reach the close paren
     while(currentStr[tempIndex] != ")") {
         // Switch the operator sign if "-(...)"
-        if(operation == "-" &&
-           (currentStr[tempIndex] == "+" ||
-            currentStr[tempIndex] == "-"))
-        {
+        if(operation == "-" && (currentStr[tempIndex] == "+" || currentStr[tempIndex] == "-")) {
             if(currentStr[tempIndex] == "+")
                 currentStr[tempIndex] = "-";
             else if(currentStr[tempIndex] == "-")
@@ -152,10 +148,7 @@ vector<string> Stack::parenthesesHelper(vector<string> currentStr, int openParen
         }
 
         // Multiply the term before the * with the term after the operator if "*(...)"
-        else if(operation == "*" &&
-           (currentStr[tempIndex] == "+" ||
-            currentStr[tempIndex] == "-"))
-        {
+        else if(operation == "*" && (currentStr[tempIndex] == "+" || currentStr[tempIndex] == "-")) {
             currentStr.insert(currentStr.begin() + tempIndex+1, "*");
             currentStr.insert(currentStr.begin() + tempIndex+1, currentStr[openParenIndex-2]);
         }
@@ -236,13 +229,10 @@ string Stack::simplify() {
     bool multIntExists = false;
     int firstIntIndex = 0;
     index = 1;
-    while(index < stringVec.size())
-    {
+    while(index < stringVec.size()) {
         // If previous index is int and next index yields *
         // Mark as first int
-        if(index > 0 && isdigit(stringVec[index-1][0]) &&
-           stringVec[index] == "*")
-        {
+        if(index > 0 && isdigit(stringVec[index-1][0]) && stringVec[index] == "*") {
             firstIntIndex = index-1;
             multIntExists = true;
             break;
@@ -257,8 +247,7 @@ string Stack::simplify() {
     // Find first additive/subtractive int
     bool intExists = false;
     index = 0;
-    while(index < stringVec.size())
-    {
+    while(index < stringVec.size()) {
         bool currentIsDigit = isdigit(stringVec[index][0]);
         bool nextIsOperator = ((index+1) < stringVec.size() && (stringVec[index+1] == "+" || stringVec[index+1] == "-"));
         bool previousWasOperator = (index >0 && (stringVec[index-1] == "+" || stringVec[index-1] == "-"));
@@ -280,13 +269,10 @@ string Stack::simplify() {
 
     // Delete +/- 0 cases
     index = 0;
-    while(index < stringVec.size())
-    {
+    while(index < stringVec.size()) {
         int toDelete = 0;
-        if(isdigit(stringVec[index][0]))
-        {
-            if(stoi(stringVec[index]) == 0)
-            {
+        if(isdigit(stringVec[index][0])) {
+            if(stoi(stringVec[index]) == 0) {
                 bool atBeginning = (index == 0);
                 bool atEnd = (index == (stringVec.size()-1));
                 bool nextOperPos = false;
@@ -305,8 +291,7 @@ string Stack::simplify() {
                 if(atBeginning && (nextOperPos || nextOperNeg)) {
                     stringVec.erase(stringVec.begin() + index);
                     toDelete++;
-                    if(nextOperPos)
-                    {
+                    if(nextOperPos) {
                         stringVec.erase(stringVec.begin() + index);
                         toDelete++;
                     }
@@ -386,7 +371,7 @@ int main() {
                 cout << "Please use one command per line (ex: PUSH 2)\n" << endl;
                 continue;
             }
-                // If PUSH value is invalid, print error message
+            // If PUSH value is invalid, print error message
             else if (!string_to_int(inputs[1])) {
                 cout << "Requested PUSH with non-integer value. Please call PUSH followed by an integer (ex: PUSH 2).\n" << endl;
                 continue;
