@@ -115,6 +115,13 @@ echo ""
 
 ################################################################
 
+echo "Testing Java implementation"
+echo "--------------------------"
+javac aSimpleDecompiler.java
+echo "Working..."
+echo ""
+sleep 2
+
 echo "Test case 1 – Simple operations: 1+2*3"
 echo "PUSH 1
 PUSH 2
