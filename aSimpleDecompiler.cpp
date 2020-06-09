@@ -92,6 +92,7 @@ string Stack::expression() {
     return stck.top();
 }
 
+//  Combines like terms within the already "simplified" expression
 void Stack::combinationHelper(vector<string> &currentStr, int firstIntIndex, string operation) {
     // First multiplicative ints
     int combinedTerms = stoi(currentStr[firstIntIndex]);
@@ -134,6 +135,8 @@ void Stack::combinationHelper(vector<string> &currentStr, int firstIntIndex, str
     }
 }
 
+//  Takes care of parenthesis, namely focused on correctly carrying out
+//  cases in which parentheses are preceded by "-" or "*"
 vector<string> Stack::parenthesesHelper(vector<string> currentStr, int openParenIndex, string operation) {
     int tempIndex = openParenIndex+2;
     // Until we reach the close paren
